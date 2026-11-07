@@ -18,6 +18,8 @@ Mục tiêu: phân cụm mẫu phát điện theo ngày, tìm luật kết hợp
 - Landing page: https://data.openei.org/submissions/4568
 - Data lake (S3, public): `s3://oedi-data-lake/pvdaq/csv/pvdata/system_id=<id>/year=<yyyy>/month=<m>/day=<d>/`
 - Systems list: `https://oedi-data-lake.s3.amazonaws.com/pvdaq/csv/systems_20250729.csv`
+- Ngày truy cập / tải dữ liệu: 07/11/2026
+- Nguồn chi tiết (từng hệ, hệ đã loại, cách trích dẫn): xem `docs/DATA_SOURCES.md`
 
 Bộ data chốt để làm bài: **NREL PVDAQ, cả năm 2015, 3 hệ thống**. File thô gốc là 1 phút (System 4, 1403) hoặc 15 phút (System 1278).
 
@@ -57,30 +59,41 @@ Cả 3 đều **đạt** để làm clustering / association / anomaly, với c�
 ## Cấu trúc file
 
 ```
+README.md                              # tổng quan, nguồn data, cách chạy
+PLAN.md                                # kế hoạch từng phần (Phase 0-5)
+requirements.txt                       # pandas, numpy, scikit-learn, mlxtend, matplotlib
+docs/
+  DATA_SOURCES.md                      # nguồn dữ liệu chi tiết + trích dẫn
 data/
-  hourly_full_year/
-    system_4_2015_hourly.csv             # 8.760 giờ, cả năm 2015
-    system_1278_2015_hourly.csv          # 8.760 giờ
-    system_1403_2015_hourly.csv          # 8.730 giờ, thiếu 30 giờ
-    README.md                            # kiểm tra cả năm + caveat
+  raw_full/                            # data thô tháng 1 + 7/2015, 186 file, ~38,4 MB
+    system_4/2015_01/  system_4/2015_07/
+    system_1278/2015_01/  system_1278/2015_07/
+    system_1403/2015_01/  system_1403/2015_07/
+  hourly_full_year/                    # đã xử lý theo giờ, cả năm 2015
+    system_4_2015_hourly.csv           # 8.760 giờ
+    system_1278_2015_hourly.csv        # 8.760 giờ
+    system_1403_2015_hourly.csv        # 8.730 giờ, thiếu 30 giờ
+    README.md                          # kiểm tra cả năm + caveat
     systems.csv
-  daily_full_year/
-    system_4_2015_daily.csv              # 365 ngày
-    system_1278_2015_daily.csv           # 365 ngày
-    system_1403_2015_daily.csv           # 365 ngày
-  metadata/
+  daily_full_year/                     # đặc trưng ngày, 365 ngày/hệ
+    system_4_2015_daily.csv
+    system_1278_2015_daily.csv
+    system_1403_2015_daily.csv
+  metadata/                            # 3 file JSON gốc của PVDAQ
     system_4_metadata.json
     system_1278_metadata.json
     system_1403_metadata.json
-  raw_full/
-    system_4/2015_01/                     # 31 file ngày gốc, tháng 1/2015
-    system_4/2015_07/                     # 31 file ngày gốc, tháng 7/2015
-    system_1278/2015_01/
-    system_1278/2015_07/
-    system_1403/2015_01/
-    system_1403/2015_07/                  # tổng 186 file, ~38,4 MB, chỉ tháng 1 + 7
+  processed/                           # đầu ra của scripts/preprocess.py
+    system_4_2015_hourly_clean.csv
+    system_1278_2015_hourly_clean.csv
+    system_1403_2015_hourly_clean.csv
 scripts/
-  build_hourly_2015.py                   # tái tạo bản cả năm 2015
+  read_raw.py                          # đọc / xem 1 file data thô
+  build_hourly_2015.py                 # tái tạo bản theo giờ cả năm từ S3
+  build_daily_full_year.py             # tính đặc trưng ngày từ bản theo giờ
+  preprocess.py                        # Phase 1: tiền xử lý + gắn cờ outlier
+outputs/
+  preprocess_report.json               # báo cáo Phase 1 (số giờ thiếu, outlier...)
 ```
 
 Cột chung trong file hourly cả năm: `timestamp, ac_power_w, dc_power_w, poa_irradiance_wm2, ambient_temp_c, module_temp_c, n_samples` (System 1278 thêm độ ẩm và gió, System 1403 thêm `poa_refcell_wm2`).
@@ -89,9 +102,21 @@ Cột trong file daily cả năm: `date, system_id, n_hours, energy_kWh, ac_powe
 
 Lưu ý: `ac_power_w` của System 1403 là tổng 2 inverter, không phải cột gốc; `dc_power_w` của System 1403 không có trong bản cả năm.
 
-## Cách tái tạo
+## Cách chạy
 
-Tải lại dữ liệu gốc từ S3 public của OEDI theo đường dẫn ở mục Nguồn dữ liệu, tổng hợp theo giờ (trung bình), chuẩn hoá đơn vị như trên, rồi tính đặc trưng ngày. Script kiểm tra và build đã dùng nằm ngoài repo này; dữ liệu trong repo là kết quả đã kiểm tra ngày 07/11/2026.
+```bash
+pip install -r requirements.txt
+python scripts/read_raw.py --system 4 --date 2015-01-01   # xem 1 file data thô
+python scripts/preprocess.py                              # Phase 1: tiền xử lý + outlier
+python scripts/build_daily_full_year.py                   # tính lại đặc trưng ngày
+```
+
+Lộ trình làm từng phần xem `PLAN.md` (Phase 2 clustering, Phase 3 association,
+Phase 4 anomaly, Phase 5 report).
+
+## Cách tái tạo dữ liệu
+
+Tải lại dữ liệu gốc từ S3 public của OEDI theo đường dẫn ở mục Nguồn dữ liệu, tổng hợp theo giờ (trung bình), chuẩn hoá đơn vị như trên, rồi tính đặc trưng ngày bằng các script trong `scripts/`. Dữ liệu trong repo là kết quả đã kiểm tra ngày 07/11/2026.
 
 ## Trích dẫn
 

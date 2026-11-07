@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+# Kết quả chạy cục bộ, không đẩy lên GitHub (đã có bản trong outputs/)
+outputs/*.png
+outputs/*.csv
