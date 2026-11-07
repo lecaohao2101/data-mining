@@ -21,9 +21,10 @@ Mục tiêu: phân cụm mẫu phát điện theo ngày, tìm luật kết hợp
 
 Phạm vi lấy trong repo này: **tháng 1 và tháng 7 năm 2015** (mùa đông + mùa hè, 62 ngày / hệ), 3 hệ thống. File thô gốc là 1 phút (System 4, 1403) hoặc 15 phút (System 1278).
 
-Repo giữ cả hai dạng:
+Repo giữ cả ba dạng:
 - **Data thô đầy đủ** trong `data/raw_full/` — 186 file ngày gốc PVDAQ, giữ nguyên tên file và nội dung, tổng ~38,4 MB (System 4: 15,4 MB, System 1278: 1,1 MB, System 1403: 22,0 MB). Đây là dữ liệu chưa qua xử lý nào.
-- **Data đã xử lý** trong `data/hourly/` và `data/daily/` — bản tổng hợp theo giờ và đặc trưng theo ngày đã chuẩn hoá đơn vị, cộng 1 ngày thô mẫu mỗi hệ trong `data/raw_samples/` để đối chiếu nhanh.
+- **Data đã xử lý Jan+Jul** trong `data/hourly/` và `data/daily/` — bản tổng hợp theo giờ và đặc trưng theo ngày đã chuẩn hoá đơn vị, cộng 1 ngày thô mẫu mỗi hệ trong `data/raw_samples/` để đối chiếu nhanh.
+- **Data đã xử lý cả năm 2015** trong `data/hourly_full_year/` — 3 file theo giờ, 8.760 giờ/hệ (System 1403: 8.730 giờ, thiếu 30 giờ do 2 khoảng trống qua đêm tháng 4 và tháng 6), tổng 2,6 MB. Lưu ý: tên cột ở bản cả năm là chữ thường (`ac_power_w`, `poa_irradiance_wm2`, …), khác với bản Jan+Jul (`ac_power_W`, …). Chi tiết kiểm tra cả năm, quy tắc làm sạch và các caveat xem trong `data/hourly_full_year/README.md`; script tái tạo ở `scripts/build_hourly_2015.py`. Timestamp là giờ địa phương từng bang, đừng merge 3 hệ theo timestamp khi chưa đổi về chung một múi giờ.
 
 ## 3 hệ thống đã chốt
 
@@ -81,8 +82,16 @@ data/
     system_1278/2015_07/
     system_1403/2015_01/
     system_1403/2015_07/                  # tổng 186 file, ~38,4 MB
+  hourly_full_year/
+    system_4_2015_hourly.csv             # 8.760 giờ, cả năm 2015
+    system_1278_2015_hourly.csv          # 8.760 giờ
+    system_1403_2015_hourly.csv          # 8.730 giờ, thiếu 30 giờ
+    README.md                            # kiểm tra cả năm + caveat
+    systems.csv
   data_check_report.json
   build_summary.json
+scripts/
+  build_hourly_2015.py                   # tái tạo bản cả năm 2015
 ```
 
 Cột chung trong file hourly: `timestamp, system_id, ac_power_W, dc_power_W, poa_irradiance_Wm2, ambient_temp_C, module_temp_C, relative_humidity_pct, wind_speed_ms, ac_power_per_kW, poa_irradiance_clipped, ac_power_clipped_W`.

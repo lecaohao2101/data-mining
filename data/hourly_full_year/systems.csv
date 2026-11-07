@@ -1,0 +1,4 @@
+system_id,system_public_name,site_location,latitude,longitude,dc_capacity_kW,kg_climate,type,tracking,tilt,first_timestamp,last_timestamp,years,available_sensor_channels,qa_status,qa_issue
+4,NREL x-Si -1,"Golden, CO",39.7406,-105.1774,1.0,BSk,ground,fixed,40.0,8/26/2007 0:00,7/28/2025 22:10,17.9342,15,pass,"Filtered time series less than 1.0 years data, Percent clipping exceeded threshold of 10%, Inconclusive orientation"
+1278,Andre Agassi Preparatory Academy - Building D,"Las Vegas, NV",36.1952,-115.1582,171.36,Bwh,roof,fixed,,8/30/2011 23:00,7/26/2020 16:00,8.9123,26,pass,"Percent clipping exceeded threshold of 10%, temp mean outside boundaries, Filtered time series less than 1.0 years data"
+1403,[1403] RTC-FSEC-Baseline,"Cocoa Beach, FL",28.405,-80.7709,6.0,Cfa,unknown,fixed,35.0,12/1/2014 10:22,6/3/2020 21:32,5.5095,26,fail,
