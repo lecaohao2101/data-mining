@@ -94,6 +94,10 @@ scripts/
   preprocess.py                        # Phase 1: tiền xử lý + gắn cờ outlier
 outputs/
   preprocess_report.json               # báo cáo Phase 1 (số giờ thiếu, outlier...)
+  clustering_report.json               # báo cáo Phase 2 (chọn k, mô tả cụm)
+  clustering_system_4.png              # biểu đồ elbow/silhouette + cụm, System 4
+  clustering_system_1278.png
+  clustering_system_1403.png
 ```
 
 Cột chung trong file hourly cả năm: `timestamp, ac_power_w, dc_power_w, poa_irradiance_wm2, ambient_temp_c, module_temp_c, n_samples` (System 1278 thêm độ ẩm và gió, System 1403 thêm `poa_refcell_wm2`).

@@ -40,18 +40,34 @@ bằng tính hợp lý của các ca phát hiện được. Không thêm Deep Le
   Tỉ lệ IQR cao là do tỉ số công suất/bức xạ dao động theo mây/nhiệt độ — đây là
   **ứng viên**, không phải kết luận anomaly; Phần 4 sẽ kiểm chứng bằng Isolation Forest.
 
-## Phase 2 — Clustering (tiếp theo)
+## Phase 2 — Clustering (đã xong, 07/11/2026)
 
 - **Mục tiêu:** phân cụm ngày theo mẫu phát điện.
-- **Input:** `data/daily_full_year/` (365 ngày/hệ) + đặc trưng ngày tính lại từ
-  `data/processed/` (tổng năng lượng, max, mean, std, giờ nắng, nhiệt độ).
-- **Phương pháp:** K-Means và GMM (Methods M3), chuẩn hoá trước, chọn k bằng
-  elbow + silhouette, thử k = 2–6.
-- **Script:** `scripts/clustering.py` → `outputs/clustering_report.json`, biểu đồ cụm.
-- **Kiểm chứng:** đối chiếu cụm với thời tiết thực (bức xạ, nhiệt độ) — cụm phải
-  giải thích được bằng thời tiết, không chỉ là con số.
-- **Xong khi:** có bảng mô tả từng cụm (số ngày, năng lượng trung bình, thời tiết
-  đặc trưng) cho cả 3 hệ, và lý do chọn k.
+- **Input:** đặc trưng ngày tính từ `data/processed/` (Phase 1).
+- **Phương pháp:** K-Means và GMM (Methods M3), chuẩn hoá trước, thử k = 2–6.
+- **Script:** `scripts/clustering.py` → `outputs/clustering_report.json`,
+  `outputs/clustering_system_<id>.png`, `data/processed/system_<id>_2015_daily_features.csv`.
+- **Kết quả:** K-Means chọn **k = 2 cho cả 3 hệ** (silhouette: System 4: 0,457;
+  System 1278: 0,445; System 1403: 0,349; k = 3–6 đều thấp hơn rõ).
+  GMM theo BIC thì chọn k = 5–6 — BIC giảm dần theo k, tức GMM chia nhỏ thêm
+  theo mùa chứ không tìm ra cụm tách biệt mới, nên vẫn giữ k = 2 của K-Means.
+- **Mô tả cụm (K-Means, k = 2):**
+  - System 4: cụm cao 274 ngày (4,81 kWh/kW, bức xạ 572 W/m², nắng 10,8 h, 14,5 °C),
+    cụm thấp 91 ngày (1,32 kWh/kW, bức xạ 256 W/m², nắng 8,5 h, 2,7 °C) — cụm thấp
+    tập trung mùa đông (tháng 1, 2, 12) nhưng vẫn rải rác cả năm, tức do mây/tuyết
+    chứ không chỉ do mùa.
+  - System 1278: cụm cao 214 ngày (5,16 kWh/kW, bức xạ 692 W/m², 27,2 °C),
+    cụm thấp 151 ngày (2,75 kWh/kW, bức xạ 521 W/m², 12,1 °C) — phân tách rõ
+    theo mùa: cụm cao gần như toàn tháng 3–10, cụm thấp toàn tháng 11–2.
+  - System 1403: cụm cao 251 ngày (4,89 kWh/kW, bức xạ 553 W/m²),
+    cụm thấp 114 ngày (2,48 kWh/kW, bức xạ 345 W/m²) — cụm thấp rải đều cả năm,
+    nhiều nhất tháng 12 (20 ngày), tức do mây/mưa Florida chứ không chỉ mùa đông.
+- **Kiểm chứng:** cụm giải thích được bằng thời tiết (bức xạ + nhiệt độ + tháng);
+  các ngày năng lượng thấp dù bức xạ cao (vd System 4 ở bức xạ ~700–800 W/m² mà
+  chỉ ~1–2 kWh/kW) là ứng viên anomaly cho Phase 4.
+- **Hạn chế ghi vào report:** mẫu ngày là một dải liên tục theo mùa/bức xạ, không
+  phải các cụm tách biệt rõ — silhouette 0,35–0,46 là trung bình, k = 2 là lựa
+  chọn đơn giản và vững nhất, không nên ép k lớn hơn chỉ để có nhiều cụm.
 
 ## Phase 3 — Association rules (luật kết hợp)
 
