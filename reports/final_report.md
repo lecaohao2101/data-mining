@@ -20,7 +20,7 @@ Florida (6 kW, humid subtropical). K-Means clustering finds two day types per
 system — high-output and low-output days — with silhouette scores of 0.35–0.46.
 Association rule mining (Apriori and FP-Growth, which agree exactly) finds 179
 rules; the strongest is that high irradiance implies high power
-(confidence 0.94–0.95, lift ≈ 2.85) in all three systems. Isolation Forest and
+(confidence 0.92–0.95, lift 2.76–2.86) in all three systems. Isolation Forest and
 One-Class SVM, both set to flag 5% of daytime hours, agree on 94.8–96.3% of hours
 and recover all 28 known high-irradiance/low-power hours in Golden, 7 of 12
 daytime hours of a known one-inverter failure in Cocoa Beach, and part of a
@@ -197,8 +197,8 @@ systems:
 
 | Rule | System | Support | Confidence | Lift |
 |---|---|---|---|---|
-| irradiance High → power High | 4 / 1278 / 1403 | 0.32 / 0.32 / 0.32 | 0.95 / 0.95 / 0.94 | 2.86 / 2.85 / 2.83 |
-| irradiance Low → power Low | 4 / 1278 / 1403 | 0.31 / 0.31 / 0.32 | 0.92 / 0.95 / 0.95 | 2.76 / 2.85 / 2.86 |
+| irradiance High → power High | 4 / 1278 / 1403 | 0.32 / 0.31 / 0.31 | 0.95 / 0.92 / 0.94 | 2.86 / 2.76 / 2.83 |
+| irradiance Low → power Low | 4 / 1278 / 1403 | 0.31 / 0.32 / 0.32 | 0.92 / 0.95 / 0.95 | 2.76 / 2.84 / 2.86 |
 | irradiance High, temperature Medium → power High | 4 | 0.116 | 0.998 | 2.99 |
 | irradiance Low, wind Low → power Low | 1278 | 0.125 | 0.967 | 2.90 |
 | humidity Low, irradiance High → power High | 1278 | 0.149 | 0.954 | 2.86 |
@@ -242,7 +242,7 @@ the looser of the two.
 
 | Case | What happened | Isolation Forest | One-Class SVM |
 |---|---|---|---|
-| System 4: 28 hours with irradiance > 800 W/m² but power < 10% of capacity | Multi-hour events on 2 Mar, 29 Jun, 28 Nov, 30 Nov 2015 | **28 / 28 flagged** | 24 / 28 |
+| System 4: 28 hours with irradiance > 800 W/m² but power < 10% of capacity | Multi-hour events, largest 17 Feb (5 h); also 2 Mar, 29 Jun, 28 Nov, 30 Nov 2015 | **28 / 28 flagged** | 24 / 28 |
 | System 1403, 15 Jun 2015: inverter 1 = 0 all day, inverter 2 normal | Power about half normal | 7 / 12 daytime hours | 5 / 12 |
 | System 1278, 3 Jul 2015: raw file only 68 of 96 rows | Much of the day missing entirely | 3 / 12 daytime hours present | 5 / 12 |
 
@@ -254,8 +254,10 @@ sensor effect, which the report records rather than hides. The Cocoa Beach
 inverter failure was only partly detected, because with one inverter still
 running, power was about half normal and some hours stayed inside the normal
 distribution. The clearest outages of the whole year were in fact in Cocoa
-Beach on 5–6 November: power 0 W/kW at midday while irradiance was
-870–1,030 W/m², plus 9 March 14:00 (0 W/kW at 861 W/m²). The Las Vegas case
+Beach on 5–6 November: on 5 November power was 0 all day while irradiance
+reached 978 W/m² at midday, and on 6 November power stayed 0 through 11:00
+(irradiance 968 W/m²) before partly recovering from 12:00, plus 9 March 14:00
+(0 W/kW at 861 W/m²). The Las Vegas case
 shows a genuine limitation: hours that are missing entirely cannot be flagged
 by a model that only sees present rows — missingness itself is the anomaly,
 and it must be caught by the completeness checks in §3, not by Isolation Forest.
@@ -274,7 +276,7 @@ an edge of the distribution.
    systems (K-Means, k = 2, silhouette 0.35–0.46). In Las Vegas the split is
    seasonal; in Golden and Cocoa Beach it is driven by clouds as well as season.
 2. **Irradiance dominates power output.** High irradiance implies high power
-   with confidence 0.94–0.95 and lift ≈ 2.85 in every system; low irradiance
+   with confidence 0.92–0.95 and lift 2.76–2.86 in every system; low irradiance
    implies low power with similar strength. Temperature and humidity refine the
    picture (heat limits output at medium irradiance in Golden; low humidity
    marks clear skies in Las Vegas) but do not overturn it.
