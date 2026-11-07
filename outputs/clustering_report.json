@@ -1,0 +1,373 @@
+[
+  {
+    "system_id": 4,
+    "n_days": 365,
+    "features": [
+      "energy_kwh_per_kw",
+      "peak_per_kw",
+      "daytime_hours",
+      "poa_daytime_mean",
+      "ambient_temp_mean",
+      "variability"
+    ],
+    "kmeans": [
+      {
+        "k": 2,
+        "inertia": 1251.5126302735503,
+        "silhouette": 0.457487445825093
+      },
+      {
+        "k": 3,
+        "inertia": 998.2319961858841,
+        "silhouette": 0.30914556693840206
+      },
+      {
+        "k": 4,
+        "inertia": 805.8177891687681,
+        "silhouette": 0.296708380044607
+      },
+      {
+        "k": 5,
+        "inertia": 691.3175187041438,
+        "silhouette": 0.2969074732735449
+      },
+      {
+        "k": 6,
+        "inertia": 615.3796965747235,
+        "silhouette": 0.2751142732187983
+      }
+    ],
+    "gmm": [
+      {
+        "k": 2,
+        "bic": 2842.3977158811003,
+        "aic": 2627.9033614340633,
+        "silhouette": 0.3925479750462252
+      },
+      {
+        "k": 3,
+        "bic": 2660.378844454984,
+        "aic": 2336.687364107637,
+        "silhouette": 0.2502023667367998
+      },
+      {
+        "k": 4,
+        "bic": 2494.978183568423,
+        "aic": 2062.0895773207667,
+        "silhouette": 0.1908640982621174
+      },
+      {
+        "k": 5,
+        "bic": 2438.9564078374747,
+        "aic": 1896.8706756895085,
+        "silhouette": 0.1929696161476779
+      },
+      {
+        "k": 6,
+        "bic": 2397.0779028538955,
+        "aic": 1745.7950448056192,
+        "silhouette": 0.24031169578012954
+      }
+    ],
+    "chosen_k_kmeans": 2,
+    "chosen_k_gmm_by_bic": 6,
+    "cluster_profiles_kmeans": [
+      {
+        "cluster": 0,
+        "n_days": 274,
+        "energy_kwh_per_kw_mean": 4.81,
+        "peak_per_kw_mean": 778.6,
+        "daytime_hours_mean": 10.8,
+        "poa_daytime_mean": 571.6,
+        "ambient_temp_mean": 14.5,
+        "variability_mean": 0.6,
+        "outlier_hours_mean": 1.1,
+        "months": {
+          "1": 16,
+          "2": 16,
+          "3": 24,
+          "4": 25,
+          "5": 18,
+          "6": 29,
+          "7": 27,
+          "8": 30,
+          "9": 30,
+          "10": 22,
+          "11": 21,
+          "12": 16
+        }
+      },
+      {
+        "cluster": 1,
+        "n_days": 91,
+        "energy_kwh_per_kw_mean": 1.32,
+        "peak_per_kw_mean": 307.87,
+        "daytime_hours_mean": 8.5,
+        "poa_daytime_mean": 256.2,
+        "ambient_temp_mean": 2.7,
+        "variability_mean": 0.66,
+        "outlier_hours_mean": 2.7,
+        "months": {
+          "1": 15,
+          "2": 12,
+          "3": 7,
+          "4": 5,
+          "5": 13,
+          "6": 1,
+          "7": 4,
+          "8": 1,
+          "10": 9,
+          "11": 9,
+          "12": 15
+        }
+      }
+    ]
+  },
+  {
+    "system_id": 1278,
+    "n_days": 365,
+    "features": [
+      "energy_kwh_per_kw",
+      "peak_per_kw",
+      "daytime_hours",
+      "poa_daytime_mean",
+      "ambient_temp_mean",
+      "variability"
+    ],
+    "kmeans": [
+      {
+        "k": 2,
+        "inertia": 1090.9954484140876,
+        "silhouette": 0.4447056786976264
+      },
+      {
+        "k": 3,
+        "inertia": 892.8472366893221,
+        "silhouette": 0.3227862651355436
+      },
+      {
+        "k": 4,
+        "inertia": 754.7680061370435,
+        "silhouette": 0.30743288526154233
+      },
+      {
+        "k": 5,
+        "inertia": 651.858547559339,
+        "silhouette": 0.27940145558090373
+      },
+      {
+        "k": 6,
+        "inertia": 572.724439323769,
+        "silhouette": 0.3216474640241005
+      }
+    ],
+    "gmm": [
+      {
+        "k": 2,
+        "bic": 3049.0938531679585,
+        "aic": 2834.5994987209215,
+        "silhouette": 0.4095122662515227
+      },
+      {
+        "k": 3,
+        "bic": 2618.684462671176,
+        "aic": 2294.992982323829,
+        "silhouette": 0.25686613411642045
+      },
+      {
+        "k": 4,
+        "bic": 2535.7472857888133,
+        "aic": 2102.858679541157,
+        "silhouette": 0.09182733522686085
+      },
+      {
+        "k": 5,
+        "bic": 1759.4389357019718,
+        "aic": 1217.3532035540054,
+        "silhouette": 0.11901934653150979
+      },
+      {
+        "k": 6,
+        "bic": 2260.7734733831885,
+        "aic": 1609.4906153349125,
+        "silhouette": 0.15667036284499578
+      }
+    ],
+    "chosen_k_kmeans": 2,
+    "chosen_k_gmm_by_bic": 5,
+    "cluster_profiles_kmeans": [
+      {
+        "cluster": 0,
+        "n_days": 214,
+        "energy_kwh_per_kw_mean": 5.16,
+        "peak_per_kw_mean": 677.88,
+        "daytime_hours_mean": 12.3,
+        "poa_daytime_mean": 692.2,
+        "ambient_temp_mean": 27.2,
+        "variability_mean": 0.54,
+        "outlier_hours_mean": 0.8,
+        "months": {
+          "2": 2,
+          "3": 23,
+          "4": 29,
+          "5": 30,
+          "6": 29,
+          "7": 30,
+          "8": 29,
+          "9": 29,
+          "10": 13
+        }
+      },
+      {
+        "cluster": 1,
+        "n_days": 151,
+        "energy_kwh_per_kw_mean": 2.75,
+        "peak_per_kw_mean": 483.47,
+        "daytime_hours_mean": 9.1,
+        "poa_daytime_mean": 521.1,
+        "ambient_temp_mean": 12.1,
+        "variability_mean": 0.51,
+        "outlier_hours_mean": 1.5,
+        "months": {
+          "1": 31,
+          "2": 26,
+          "3": 8,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 2,
+          "9": 1,
+          "10": 18,
+          "11": 30,
+          "12": 31
+        }
+      }
+    ]
+  },
+  {
+    "system_id": 1403,
+    "n_days": 365,
+    "features": [
+      "energy_kwh_per_kw",
+      "peak_per_kw",
+      "daytime_hours",
+      "poa_daytime_mean",
+      "ambient_temp_mean",
+      "variability"
+    ],
+    "kmeans": [
+      {
+        "k": 2,
+        "inertia": 1478.9101433650344,
+        "silhouette": 0.3491351879127805
+      },
+      {
+        "k": 3,
+        "inertia": 1124.5380507921589,
+        "silhouette": 0.31033611643339704
+      },
+      {
+        "k": 4,
+        "inertia": 958.066740417232,
+        "silhouette": 0.2940100448694402
+      },
+      {
+        "k": 5,
+        "inertia": 819.0349506078016,
+        "silhouette": 0.30939909745224925
+      },
+      {
+        "k": 6,
+        "inertia": 689.3904250064866,
+        "silhouette": 0.30307986106995294
+      }
+    ],
+    "gmm": [
+      {
+        "k": 2,
+        "bic": 3840.048111957046,
+        "aic": 3625.553757510009,
+        "silhouette": 0.31925839796216554
+      },
+      {
+        "k": 3,
+        "bic": 3499.189065013025,
+        "aic": 3175.497584665678,
+        "silhouette": 0.2810484420554861
+      },
+      {
+        "k": 4,
+        "bic": 3323.018642772712,
+        "aic": 2890.1300365250554,
+        "silhouette": 0.2937490742647498
+      },
+      {
+        "k": 5,
+        "bic": 3315.393663982011,
+        "aic": 2773.3079318340447,
+        "silhouette": 0.2850197128439866
+      },
+      {
+        "k": 6,
+        "bic": 3427.961888610535,
+        "aic": 2776.679030562259,
+        "silhouette": 0.2231298007852006
+      }
+    ],
+    "chosen_k_kmeans": 2,
+    "chosen_k_gmm_by_bic": 5,
+    "cluster_profiles_kmeans": [
+      {
+        "cluster": 0,
+        "n_days": 251,
+        "energy_kwh_per_kw_mean": 4.89,
+        "peak_per_kw_mean": 769.95,
+        "daytime_hours_mean": 10.9,
+        "poa_daytime_mean": 553.4,
+        "ambient_temp_mean": 34.5,
+        "variability_mean": 0.57,
+        "outlier_hours_mean": 1.0,
+        "months": {
+          "1": 21,
+          "2": 18,
+          "3": 25,
+          "4": 23,
+          "5": 28,
+          "6": 23,
+          "7": 26,
+          "8": 21,
+          "9": 18,
+          "10": 23,
+          "11": 14,
+          "12": 11
+        }
+      },
+      {
+        "cluster": 1,
+        "n_days": 114,
+        "energy_kwh_per_kw_mean": 2.48,
+        "peak_per_kw_mean": 507.2,
+        "daytime_hours_mean": 9.4,
+        "poa_daytime_mean": 345.1,
+        "ambient_temp_mean": 29.9,
+        "variability_mean": 0.64,
+        "outlier_hours_mean": 1.3,
+        "months": {
+          "1": 10,
+          "2": 10,
+          "3": 6,
+          "4": 7,
+          "5": 3,
+          "6": 7,
+          "7": 5,
+          "8": 10,
+          "9": 12,
+          "10": 8,
+          "11": 16,
+          "12": 20
+        }
+      }
+    ]
+  }
+]

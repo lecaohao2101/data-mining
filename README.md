@@ -95,7 +95,7 @@ scripts/
 outputs/
   preprocess_report.json               # báo cáo Phase 1 (số giờ thiếu, outlier...)
   clustering_report.json               # báo cáo Phase 2 (chọn k, mô tả cụm)
-  clustering_system_4.png              # biểu đồ elbow/silhouette + cụm, System 4
+  clustering_system_4.png              # biểu đồ elbow/silhouette + cụm (tạo local, xem PLAN.md)
   clustering_system_1278.png
   clustering_system_1403.png
 ```

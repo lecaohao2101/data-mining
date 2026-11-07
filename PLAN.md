@@ -46,7 +46,9 @@ bằng tính hợp lý của các ca phát hiện được. Không thêm Deep Le
 - **Input:** đặc trưng ngày tính từ `data/processed/` (Phase 1).
 - **Phương pháp:** K-Means và GMM (Methods M3), chuẩn hoá trước, thử k = 2–6.
 - **Script:** `scripts/clustering.py` → `outputs/clustering_report.json`,
-  `outputs/clustering_system_<id>.png`, `data/processed/system_<id>_2015_daily_features.csv`.
+  `outputs/clustering_system_<id>.png` (biểu đồ, tạo local — GitHub chỉ nhận file text
+  nên PNG không đẩy lên được qua công cụ hiện tại, chạy lại script là có),
+  `data/processed/system_<id>_2015_daily_features.csv`.
 - **Kết quả:** K-Means chọn **k = 2 cho cả 3 hệ** (silhouette: System 4: 0,457;
   System 1278: 0,445; System 1403: 0,349; k = 3–6 đều thấp hơn rõ).
   GMM theo BIC thì chọn k = 5–6 — BIC giảm dần theo k, tức GMM chia nhỏ thêm
