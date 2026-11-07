@@ -21,15 +21,28 @@ Cleaning rules (documented, applied before hourly averaging):
     2015-06-15 inv1 reads 0 all day while inv2 is normal: a real one-day fault,
     kept in the data as anomaly-detection material (do NOT delete it).
   - hourly value = mean of the sub-hourly samples in that hour; *_n = sample count.
-Output: data/hourly/system_{id}_2015_hourly.csv  (8760 rows each, UTC-naive local time
-as recorded in PVDAQ `measured_on`; systems are in different US timezones, so do
-NOT merge on timestamp without converting to a common timezone first.)
+Output: data/hourly_full_year/system_{id}_2015_hourly.csv  (8760 rows each,
+UTC-naive local time as recorded in PVDAQ `measured_on`; systems are in
+different US timezones, so do NOT merge on timestamp without converting to a
+common timezone first). Hours with no raw samples at all (n_samples == 0,
+e.g. System 1403's two overnight gaps) are dropped as rows, not kept as NaN
+rows — that is why System 1403 has 8,730 rows instead of 8,760.
+
+This script is step 1 of the pipeline (see scripts/run_pipeline.py). It
+downloads the raw day files from the public S3 lake and builds the hourly
+files that every later step reads. The hourly files are GENERATED data:
+they are not stored in git (see .gitignore); run this script to recreate them.
+
+Usage:  python scripts/build_hourly_2015.py [--out data/hourly_full_year]
 """
+import argparse
 import io, urllib.request, pandas as pd, numpy as np
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 
 BASE = "https://oedi-data-lake.s3.amazonaws.com/pvdaq/csv/pvdata"
-OUT = "/tmp/pvdaq-check/data/hourly"
+ROOT = Path(__file__).resolve().parent.parent
+OUT = ROOT / "data" / "hourly_full_year"
 
 SYSTEMS = {
     4: dict(
@@ -84,13 +97,17 @@ def clean_hourly(sid, df):
     amb = np.where(amb > 80, np.nan, amb)
     out["ambient_temp_c"] = amb
     mods = pd.concat([get(c) for c in spec["mod"]], axis=1)
+    # Convert °F -> °C FIRST: module temperature in Las Vegas regularly
+    # exceeds 100 °F (up to ~139 °F), which is normal — masking >100 before
+    # conversion would wrongly wipe out ~1,300 hours (bug found 2026-11-07
+    # when the pipeline was rerun from scratch: module_temp_c had 1,298 NaN).
+    if spec.get("mod_f"):
+        mods = (mods - 32) * 5 / 9
     # 3276.7C is a failed-sensor sentinel (1403, several sensors at once on
     # 2015-03-02/03): drop per-sensor values >100C before aggregating.
     mods = mods.where(mods <= 100)
     # 1403: module_temp_8 is stuck at 3276.7C Mar-Aug 2015 -> use MEDIAN, not mean
     mods = mods.median(axis=1) if sid == 1403 else mods.mean(axis=1)
-    if spec.get("mod_f"):
-        mods = (mods - 32) * 5 / 9
     out["module_temp_c"] = mods
     if "rh" in spec:
         out["relative_humidity_pct"] = get(spec["rh"])
@@ -101,12 +118,16 @@ def clean_hourly(sid, df):
     rs = out.set_index("timestamp").resample("1h")
     agg = {c: "mean" for c in rs.obj.columns if c != "n_samples"}
     agg["n_samples"] = "sum"
-    out = rs.agg(agg)
-    return out.reset_index()
+    out = rs.agg(agg).reset_index()
+    # Drop hours with no raw samples at all (overnight data gaps): they are
+    # absent as rows, not NaN rows. Hours WITH samples but missing values
+    # (e.g. System 1278's 22 hours with missing AC) are kept, with NaN.
+    out = out[out["n_samples"] > 0].reset_index(drop=True)
+    return out
 
-def build(sid):
+def build(sid, out_dir=OUT):
     import os
-    os.makedirs(OUT, exist_ok=True)
+    os.makedirs(out_dir, exist_ok=True)
     import calendar
     days = [(m, d) for m in range(1, 13) for d in range(1, calendar.monthrange(2015, m)[1] + 1)]
     print(f"sys{sid}: fetching {len(days)} days ...", flush=True)
@@ -116,7 +137,7 @@ def build(sid):
     print(f"sys{sid}: {len(ok)}/{len(days)} day files OK, {sum(len(f) for f in ok)} raw rows", flush=True)
     hourly = pd.concat([clean_hourly(sid, f) for f in ok], ignore_index=True)
     hourly = hourly.sort_values("timestamp")
-    path = f"{OUT}/system_{sid}_2015_hourly.csv"
+    path = Path(out_dir) / f"system_{sid}_2015_hourly.csv"
     hourly.to_csv(path, index=False)
     print(f"sys{sid}: wrote {path} rows={len(hourly)} "
           f"{hourly.timestamp.min()} -> {hourly.timestamp.max()} "
@@ -125,5 +146,8 @@ def build(sid):
     return path
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Build hourly PVDAQ data for 2015")
+    parser.add_argument("--out", default=str(OUT), help="Output directory (default: data/hourly_full_year)")
+    args = parser.parse_args()
     for sid in [4, 1278, 1403]:
-        build(sid)
+        build(sid, out_dir=args.out)

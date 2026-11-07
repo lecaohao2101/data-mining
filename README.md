@@ -23,8 +23,9 @@ Mục tiêu: phân cụm mẫu phát điện theo ngày, tìm luật kết hợp
 
 Bộ data chốt để làm bài: **NREL PVDAQ, cả năm 2015, 3 hệ thống**. File thô gốc là 1 phút (System 4, 1403) hoặc 15 phút (System 1278).
 
-Repo chỉ giữ bộ chốt này, cả thô và đã xử lý:
-- **Data đã xử lý cả năm 2015** trong `data/hourly_full_year/` — 3 file theo giờ, 8.760 giờ/hệ (System 1403: 8.730 giờ, thiếu 30 giờ do 2 khoảng trống qua đêm tháng 4 và tháng 6), tổng 2,6 MB; và `data/daily_full_year/` — 3 file đặc trưng ngày, 365 ngày/hệ, tính từ bản theo giờ cả năm. Tên cột là chữ thường (`ac_power_w`, `poa_irradiance_wm2`, …). Chi tiết kiểm tra cả năm, quy tắc làm sạch và các caveat xem trong `data/hourly_full_year/README.md`; script tái tạo bản theo giờ ở `scripts/build_hourly_2015.py`. Timestamp là giờ địa phương từng bang, đừng merge 3 hệ theo timestamp khi chưa đổi về chung một múi giờ.
+**Quy tắc của repo này: data thô + code nằm trong git, data đã xử lý do code tạo ra.**
+- **Data thô** trong `data/raw_full/` — 186 file ngày gốc PVDAQ tháng 1 và tháng 7/2015 (xem dưới).
+- **Data đã xử lý cả năm 2015** trong `data/hourly_full_year/` — 3 file theo giờ, 8.760 giờ/hệ (System 1403: 8.730 giờ, thiếu 30 giờ do 2 khoảng trống qua đêm tháng 4 và tháng 6), tổng 2,6 MB; và `data/daily_full_year/` — 3 file đặc trưng ngày, 365 ngày/hệ, tính từ bản theo giờ cả năm. **Các file này do code tạo ra khi chạy pipeline, KHÔNG nằm trong git** (xem `.gitignore` và mục Cách chạy). Chạy `python scripts/run_pipeline.py` để tạo lại, rồi xem bằng `python scripts/inspect_data.py` trước khi viết report. Tên cột là chữ thường (`ac_power_w`, `poa_irradiance_wm2`, …). Chi tiết kiểm tra cả năm, quy tắc làm sạch và các caveat xem trong `data/hourly_full_year/README.md`; script tái tạo bản theo giờ ở `scripts/build_hourly_2015.py`. Timestamp là giờ địa phương từng bang, đừng merge 3 hệ theo timestamp khi chưa đổi về chung một múi giờ.
 - **Data thô** trong `data/raw_full/` — 186 file ngày gốc PVDAQ tháng 1 và tháng 7/2015, giữ nguyên tên file và nội dung, tổng ~38,4 MB (System 4: 15,4 MB, System 1278: 1,1 MB, System 1403: 22,0 MB). Lưu ý: phần thô trong repo chỉ có tháng 1 + 7, chưa có thô cả năm; bản đã xử lý cả năm đã bao gồm các tháng còn lại.
 
 ## 3 hệ thống đã chốt
@@ -118,9 +119,18 @@ Lưu ý: `ac_power_w` của System 1403 là tổng 2 inverter, không phải c�
 
 ```bash
 pip install -r requirements.txt
+python scripts/run_pipeline.py          # chạy toàn bộ pipeline, tạo ra mọi data đã xử lý + kết quả
+python scripts/inspect_data.py          # xem data đã xử lý như thế nào, rồi mới viết report
+```
+
+Pipeline chạy theo thứ tự: build hourly 2015 (tải từ S3 public) → đặc trưng ngày
+→ tiền xử lý + outlier (Phase 1) → clustering (Phase 2) → luật kết hợp (Phase 3)
+→ anomaly detection (Phase 4). Chạy từng bước riêng cũng được, vd:
+
+```bash
 python scripts/read_raw.py --system 4 --date 2015-01-01   # xem 1 file data thô
-python scripts/preprocess.py                              # Phase 1: tiền xử lý + outlier
-python scripts/build_daily_full_year.py                   # tính lại đặc trưng ngày
+python scripts/run_pipeline.py --skip-hourly              # bỏ bước tải hourly khi đã có sẵn
+python scripts/run_pipeline.py --only preprocess,clustering
 ```
 
 Lộ trình làm từng phần xem `PLAN.md` (Phase 2 clustering, Phase 3 association,

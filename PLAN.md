@@ -1,5 +1,17 @@
 # Kế hoạch làm bài — Mining Solar Power Generation Data
 
+## Workflow — code tạo data, không làm tay
+
+- **Trong git:** data thô (`data/raw_full/`, `data/metadata/`), code (`scripts/`),
+  docs (`docs/`, `README.md`, `PLAN.md`) và report (`reports/`).
+- **Không trong git:** mọi data đã xử lý (`data/hourly_full_year/*.csv`,
+  `data/daily_full_year/`, `data/processed/`) và mọi kết quả (`outputs/`) —
+  chúng do code tạo ra khi chạy `python scripts/run_pipeline.py` (xem `.gitignore`).
+- **Trước khi viết report:** chạy `python scripts/inspect_data.py` để xem data đã
+  xử lý trông như thế nào (số dòng, cột, vài dòng đầu, thống kê). Mọi con số trong
+  report đều phải lấy từ output của script này hoặc từ các file trong `outputs/`,
+  không lấy từ trí nhớ.
+
 Đề tài: **Mining Solar Power Generation Data for Pattern Discovery and Anomaly Detection**
 Khung: Specialization *Data Mining Foundations and Practice* (University of Colorado
 Boulder, Coursera, qua FPT University), giảng viên Qin (Christine) Lv.
