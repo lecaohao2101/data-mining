@@ -19,12 +19,11 @@ Mục tiêu: phân cụm mẫu phát điện theo ngày, tìm luật kết hợp
 - Data lake (S3, public): `s3://oedi-data-lake/pvdaq/csv/pvdata/system_id=<id>/year=<yyyy>/month=<m>/day=<d>/`
 - Systems list: `https://oedi-data-lake.s3.amazonaws.com/pvdaq/csv/systems_20250729.csv`
 
-Phạm vi lấy trong repo này: **tháng 1 và tháng 7 năm 2015** (mùa đông + mùa hè, 62 ngày / hệ), 3 hệ thống. File thô gốc là 1 phút (System 4, 1403) hoặc 15 phút (System 1278).
+Bộ data chốt để làm bài: **NREL PVDAQ, cả năm 2015, 3 hệ thống**. File thô gốc là 1 phút (System 4, 1403) hoặc 15 phút (System 1278).
 
-Repo giữ cả ba dạng:
-- **Data thô đầy đủ** trong `data/raw_full/` — 186 file ngày gốc PVDAQ, giữ nguyên tên file và nội dung, tổng ~38,4 MB (System 4: 15,4 MB, System 1278: 1,1 MB, System 1403: 22,0 MB). Đây là dữ liệu chưa qua xử lý nào.
-- **Data đã xử lý Jan+Jul** trong `data/hourly/` và `data/daily/` — bản tổng hợp theo giờ và đặc trưng theo ngày đã chuẩn hoá đơn vị, cộng 1 ngày thô mẫu mỗi hệ trong `data/raw_samples/` để đối chiếu nhanh.
-- **Data đã xử lý cả năm 2015** trong `data/hourly_full_year/` — 3 file theo giờ, 8.760 giờ/hệ (System 1403: 8.730 giờ, thiếu 30 giờ do 2 khoảng trống qua đêm tháng 4 và tháng 6), tổng 2,6 MB. Lưu ý: tên cột ở bản cả năm là chữ thường (`ac_power_w`, `poa_irradiance_wm2`, …), khác với bản Jan+Jul (`ac_power_W`, …). Chi tiết kiểm tra cả năm, quy tắc làm sạch và các caveat xem trong `data/hourly_full_year/README.md`; script tái tạo ở `scripts/build_hourly_2015.py`. Timestamp là giờ địa phương từng bang, đừng merge 3 hệ theo timestamp khi chưa đổi về chung một múi giờ.
+Repo chỉ giữ bộ chốt này, cả thô và đã xử lý:
+- **Data đã xử lý cả năm 2015** trong `data/hourly_full_year/` — 3 file theo giờ, 8.760 giờ/hệ (System 1403: 8.730 giờ, thiếu 30 giờ do 2 khoảng trống qua đêm tháng 4 và tháng 6), tổng 2,6 MB; và `data/daily_full_year/` — 3 file đặc trưng ngày, 365 ngày/hệ, tính từ bản theo giờ cả năm. Tên cột là chữ thường (`ac_power_w`, `poa_irradiance_wm2`, …). Chi tiết kiểm tra cả năm, quy tắc làm sạch và các caveat xem trong `data/hourly_full_year/README.md`; script tái tạo bản theo giờ ở `scripts/build_hourly_2015.py`. Timestamp là giờ địa phương từng bang, đừng merge 3 hệ theo timestamp khi chưa đổi về chung một múi giờ.
+- **Data thô** trong `data/raw_full/` — 186 file ngày gốc PVDAQ tháng 1 và tháng 7/2015, giữ nguyên tên file và nội dung, tổng ~38,4 MB (System 4: 15,4 MB, System 1278: 1,1 MB, System 1403: 22,0 MB). Lưu ý: phần thô trong repo chỉ có tháng 1 + 7, chưa có thô cả năm; bản đã xử lý cả năm đã bao gồm các tháng còn lại.
 
 ## 3 hệ thống đã chốt
 
@@ -34,17 +33,17 @@ Repo giữ cả ba dạng:
 | 1278 | Andre Agassi Preparatory Academy — Building D, Las Vegas, NV | BWh — sa mạc nóng | 171,36 kW | 15 phút, 28 cột | ac_power, dc_power, poa_irradiance, ambient_temp (°F → °C), module_temp (°F → °C), relative_humidity, wind_speed (mph → m/s) |
 | 1403 | RTC-FSEC-Baseline, Cocoa Beach, FL | Cfa — ẩm cận nhiệt | 6,0 kW | 1 phút, 26 cột | inv1+inv2 ac_power (không có cột tổng), poa_irradiance, ambient_temp (°C), module_temp 1–8 |
 
-Đa dạng cho report: nhiệt độ trung bình Jan+Jul lần lượt 12,4 °C (Golden), 21,0 °C (Las Vegas), 34,3 °C (Cocoa Beach, cảm biến có xu hướng đọc cao — xem dưới); bức xạ trung bình 193 / 268 / 212 W/m²; quy mô hệ chênh nhau 1 kW → 171 kW nên phải chuẩn hoá theo công suất định mức (`ac_power_per_kW`) trước khi so sánh.
+Đa dạng cho report: 3 khí hậu BSk / BWh / Cfa, quy mô hệ chênh nhau 1 kW → 171 kW nên phải chuẩn hoá theo công suất định mức trước khi so sánh. Nhiệt độ môi trường System 1403 có xu hướng đọc cao trong mùa nóng — xem caveat trong `data/hourly_full_year/README.md`.
 
-## Kết quả kiểm tra (tháng 1 + 7/2015, 62 ngày / hệ)
+## Kết quả kiểm tra (cả năm 2015)
 
-Xem đầy đủ số liệu trong `data/data_check_report.json`. Tóm tắt:
+Xem đầy đủ trong `data/hourly_full_year/README.md`. Tóm tắt:
 
-| System | Dòng mẫu | Ngày thiếu | Thiếu power / bức xạ / nhiệt độ | Tương quan công suất–bức xạ ban ngày (bức xạ > 50) | Công suất max |
-|---|---|---|---|---|---|
-| 4 | 89.280 | 0 | 0% / 0% / 0% | 0,961 | 1.059 W |
-| 1278 | 5.884 | 0 | 1,07% / 1,07% / 1,07% | 0,937 | 141.700 W |
-| 1403 | 89.280 | 0 | 0% / 0% / 0% | 0,976 | 6.170 W (tổng 2 inverter) |
+| System | Giờ cả năm | Thiếu giờ | Tương quan công suất–bức xạ ban ngày | Công suất max ban ngày |
+|---|---|---|---|---|
+| 4 | 8.760 | 0 | 0,942 | 942 W |
+| 1278 | 8.760 | 22 giờ thiếu AC, nhiệt độ môi trường thiếu 719 giờ (8,2%, chủ yếu tháng 12) | 0,980 | 138.225 W |
+| 1403 | 8.730 | 30 giờ (2 khoảng trống qua đêm tháng 4 và 6) | 0,964 | 6.168 W |
 
 Cả 3 đều **đạt** để làm clustering / association / anomaly, với các lưu ý xử lý dưới đây — chính những điểm này là chất liệu cho phần tiền xử lý trong report.
 
@@ -52,53 +51,43 @@ Cả 3 đều **đạt** để làm clustering / association / anomaly, với c�
 
 - **System 4:** bức xạ âm 47,1% số dòng (giá trị ban đêm khoảng −2 W/m², sai số cảm biến). Công suất âm chỉ 0,9%. → Clip bức xạ và công suất âm về 0 khi tính năng lượng, giữ lại để ghi nhận trong report.
 - **System 1278:** công suất âm 50,4% số dòng, ban đêm khoảng −400 đến −1.100 W (inverter standby / offset). Nhiệt độ gốc là °F, gió là mph. → Đổi đơn vị, clip công suất đêm về 0, không dùng giá trị âm làm mẫu phát điện.
-- **System 1403:** không có cột tổng công suất, phải cộng `inv1_ac_power + inv2_ac_power`. Cảm biến `module_temp_8` bị kẹt ở 3276,7 °C trong một số ngày tháng 7 (ví dụ 21/07/2015) — cảm biến hỏng, không phải nhiệt độ thật. Nhiệt độ môi trường đọc cao bất thường (trung bình 34,3 °C, max 59,1 °C; đêm tháng 1 đã ~27 °C trong khi module ~19 °C). Trong file đã xử lý, `module_temp_C` dùng **trung vị** của 8 cảm biến thay vì trung bình, để một cảm biến hỏng không kéo lệch cả hệ. Hệ này trong danh sách systems của PVDAQ bị gắn QA `fail` ở phạm vi toàn bộ thời gian, nhưng mẫu Jan+Jul 2015 kiểm tra thực tế là 0% thiếu và tương quan cao nhất (0,976) — vẫn dùng được, nhưng phải ghi rõ giới hạn này trong report.
+- **System 1403:** không có cột tổng công suất, phải cộng `inv1_ac_power + inv2_ac_power`. Cảm biến `module_temp_8` bị kẹt ở 3276,7 °C từ tháng 3 đến tháng 8/2015 — cảm biến hỏng, không phải nhiệt độ thật; bản cả năm đã loại giá trị trên 100 °C từng cảm biến rồi lấy **trung vị** của 8 cảm biến. Nhiệt độ môi trường đọc cao bất thường trong mùa nóng (tới 58 °C, có 1 spike 122,3 °C ngày 08/10/2015 đã loại theo quy tắc >80 °C). Hệ này trong danh sách systems của PVDAQ bị gắn QA `fail`, nhưng kiểm tra cả năm vẫn tương quan công suất–bức xạ 0,964 — vẫn dùng được, nhưng phải ghi rõ giới hạn này trong report.
 - **Chung:** chỉ phân tích ban ngày (bức xạ > 50 W/m²) cho clustering / association; ban đêm công suất ≈ 0 là bình thường, không phải anomaly.
 
 ## Cấu trúc file
 
 ```
 data/
-  hourly/
-    system_4_2015_jan_jul_hourly.csv      # 1.488 giờ, Jan+Jul 2015
-    system_1278_2015_jan_jul_hourly.csv   # 1.488 giờ, trong đó 1 giờ (03/07/2015 15:00) thiếu dữ liệu gốc
-    system_1403_2015_jan_jul_hourly.csv   # 1.488 giờ
-  daily/
-    system_4_2015_jan_jul_daily.csv       # 62 ngày: năng lượng, peak, mean/max/std, giờ nắng
-    system_1278_2015_jan_jul_daily.csv
-    system_1403_2015_jan_jul_daily.csv
-  metadata/
-    system_4_metadata.json
-    system_1278_metadata.json
-    system_1403_metadata.json
-  raw_samples/
-    sys4_20150101.csv
-    sys1278_20150101.csv
-    sys1403_20150101.csv                  # 1 ngày thô gốc mỗi hệ, 01/01/2015
-  raw_full/
-    system_4/2015_01/                     # 31 file ngày gốc, tháng 1/2015
-    system_4/2015_07/                     # 31 file ngày gốc, tháng 7/2015
-    system_1278/2015_01/
-    system_1278/2015_07/
-    system_1403/2015_01/
-    system_1403/2015_07/                  # tổng 186 file, ~38,4 MB
   hourly_full_year/
     system_4_2015_hourly.csv             # 8.760 giờ, cả năm 2015
     system_1278_2015_hourly.csv          # 8.760 giờ
     system_1403_2015_hourly.csv          # 8.730 giờ, thiếu 30 giờ
     README.md                            # kiểm tra cả năm + caveat
     systems.csv
-  data_check_report.json
-  build_summary.json
+  daily_full_year/
+    system_4_2015_daily.csv              # 365 ngày
+    system_1278_2015_daily.csv           # 365 ngày
+    system_1403_2015_daily.csv           # 365 ngày
+  metadata/
+    system_4_metadata.json
+    system_1278_metadata.json
+    system_1403_metadata.json
+  raw_full/
+    system_4/2015_01/                     # 31 file ngày gốc, tháng 1/2015
+    system_4/2015_07/                     # 31 file ngày gốc, tháng 7/2015
+    system_1278/2015_01/
+    system_1278/2015_07/
+    system_1403/2015_01/
+    system_1403/2015_07/                  # tổng 186 file, ~38,4 MB, chỉ tháng 1 + 7
 scripts/
   build_hourly_2015.py                   # tái tạo bản cả năm 2015
 ```
 
-Cột chung trong file hourly: `timestamp, system_id, ac_power_W, dc_power_W, poa_irradiance_Wm2, ambient_temp_C, module_temp_C, relative_humidity_pct, wind_speed_ms, ac_power_per_kW, poa_irradiance_clipped, ac_power_clipped_W`.
+Cột chung trong file hourly cả năm: `timestamp, ac_power_w, dc_power_w, poa_irradiance_wm2, ambient_temp_c, module_temp_c, n_samples` (System 1278 thêm độ ẩm và gió, System 1403 thêm `poa_refcell_wm2`).
 
-Cột trong file daily: `date, system_id, n_records, energy_kWh, ac_power_mean_W, ac_power_max_W, ac_power_std_W, poa_irradiance_mean_Wm2, poa_irradiance_max_Wm2, ambient_temp_mean_C, ambient_temp_max_C, ambient_temp_min_C, module_temp_mean_C, daytime_hours_irr_gt_50, daytime_ac_power_mean_W, daytime_irr_mean_Wm2`.
+Cột trong file daily cả năm: `date, system_id, n_hours, energy_kWh, ac_power_mean_W, ac_power_max_W, ac_power_std_W, poa_irradiance_mean_Wm2, poa_irradiance_max_Wm2, ambient_temp_mean_C, ambient_temp_max_C, ambient_temp_min_C, module_temp_mean_C, daytime_hours_irr_gt_50, daytime_ac_power_mean_W, daytime_irr_mean_Wm2`.
 
-Lưu ý về `dc_power_W` của System 1403: tính gần đúng bằng V×I của 2 inverter, không phải cột gốc.
+Lưu ý: `ac_power_w` của System 1403 là tổng 2 inverter, không phải cột gốc; `dc_power_w` của System 1403 không có trong bản cả năm.
 
 ## Cách tái tạo
 
