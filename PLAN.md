@@ -3,12 +3,13 @@
 ## Workflow — code tạo data, không làm tay
 
 - **Trong git:** data thô (`data/raw_full/`, `data/metadata/`), code (`scripts/`),
-  docs (`docs/`, `README.md`, `PLAN.md`), report (`reports/`) và **kết quả**
-  (`outputs/*.json`, `outputs/*.csv`) — kết quả do code tạo ra, đưa lên git để
-  người chấm xem trực tiếp mà không cần chạy code.
-- **Không trong git:** data trung gian (`data/hourly_full_year/*.csv`,
-  `data/daily_full_year/`, `data/processed/`) và biểu đồ PNG (`outputs/*.png`) —
-  chúng do code tạo ra khi chạy `python scripts/run_pipeline.py` (xem `.gitignore`).
+  docs (`docs/`, `README.md`, `PLAN.md`), report (`reports/`), **kết quả**
+  (`outputs/*.json`, `outputs/*.csv`) và **data trung gian**
+  (`data/hourly_full_year/*.csv`, `data/daily_full_year/`, `data/processed/`) —
+  tất cả đều do code tạo ra khi chạy `python scripts/run_pipeline.py`, đưa lên
+  git để người chấm xem trực tiếp mà không cần chạy code.
+- **Không trong git:** chỉ biểu đồ PNG (`outputs/*.png`) — công cụ push chỉ
+  nhận file text, nên chạy lại script để xem.
 - **Trước khi viết report:** chạy `python scripts/inspect_data.py` để xem data đã
   xử lý trông như thế nào (số dòng, cột, vài dòng đầu, thống kê). Mọi con số trong
   report đều phải lấy từ output của script này hoặc từ các file trong `outputs/`,
