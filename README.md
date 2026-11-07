@@ -19,7 +19,11 @@ Mục tiêu: phân cụm mẫu phát điện theo ngày, tìm luật kết hợp
 - Data lake (S3, public): `s3://oedi-data-lake/pvdaq/csv/pvdata/system_id=<id>/year=<yyyy>/month=<m>/day=<d>/`
 - Systems list: `https://oedi-data-lake.s3.amazonaws.com/pvdaq/csv/systems_20250729.csv`
 
-Phạm vi lấy trong repo này: **tháng 1 và tháng 7 năm 2015** (mùa đông + mùa hè, 62 ngày / hệ), 3 hệ thống. File thô gốc là 1 phút (System 4, 1403) hoặc 15 phút (System 1278), dung lượng hàng trăm MB–GB cho cả năm, nên repo chỉ giữ bản **tổng hợp theo giờ** và **đặc trưng theo ngày** đã chuẩn hoá đơn vị, cộng 1 ngày thô mẫu mỗi hệ để đối chiếu.
+Phạm vi lấy trong repo này: **tháng 1 và tháng 7 năm 2015** (mùa đông + mùa hè, 62 ngày / hệ), 3 hệ thống. File thô gốc là 1 phút (System 4, 1403) hoặc 15 phút (System 1278).
+
+Repo giữ cả hai dạng:
+- **Data thô đầy đủ** trong `data/raw_full/` — 186 file ngày gốc PVDAQ, giữ nguyên tên file và nội dung, tổng ~38,4 MB (System 4: 15,4 MB, System 1278: 1,1 MB, System 1403: 22,0 MB). Đây là dữ liệu chưa qua xử lý nào.
+- **Data đã xử lý** trong `data/hourly/` và `data/daily/` — bản tổng hợp theo giờ và đặc trưng theo ngày đã chuẩn hoá đơn vị, cộng 1 ngày thô mẫu mỗi hệ trong `data/raw_samples/` để đối chiếu nhanh.
 
 ## 3 hệ thống đã chốt
 
@@ -70,6 +74,13 @@ data/
     sys4_20150101.csv
     sys1278_20150101.csv
     sys1403_20150101.csv                  # 1 ngày thô gốc mỗi hệ, 01/01/2015
+  raw_full/
+    system_4/2015_01/                     # 31 file ngày gốc, tháng 1/2015
+    system_4/2015_07/                     # 31 file ngày gốc, tháng 7/2015
+    system_1278/2015_01/
+    system_1278/2015_07/
+    system_1403/2015_01/
+    system_1403/2015_07/                  # tổng 186 file, ~38,4 MB
   data_check_report.json
   build_summary.json
 ```
