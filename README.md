@@ -166,6 +166,26 @@ python scripts/inspect_data.py --only outputs
 Lộ trình làm từng phần xem `PLAN.md` (Phase 2 clustering, Phase 3 association,
 Phase 4 anomaly, Phase 5 report).
 
+## Notebooks — chạy từng phần cho dễ xem và control
+
+Thư mục `notebooks/` có 5 notebook Jupyter, mỗi cái tương ứng một bước:
+
+| Notebook | Nội dung |
+|---|---|
+| `00_data_overview.ipynb` | Xem data đã xử lý trước khi phân tích |
+| `01_preprocessing.ipynb` | Phase 1: tiền xử lý + outlier |
+| `02_clustering.ipynb` | Phase 2: clustering ngày |
+| `03_association.ipynb` | Phase 3: luật kết hợp |
+| `04_anomaly.ipynb` | Phase 4: phát hiện bất thường |
+
+```bash
+jupyter notebook   # mở trong trình duyệt, rồi vào thư mục notebooks/
+```
+
+Mỗi notebook có một cell chạy script tương ứng rồi xem kết quả ngay dưới mỗi
+cell (bảng, số liệu, biểu đồ). Muốn chạy lại một phần thì chỉ chạy lại
+notebook đó. Chi tiết xem `notebooks/README.md`.
+
 ## Cách tái tạo dữ liệu
 
 Tải lại dữ liệu gốc từ S3 public của OEDI theo đường dẫn ở mục Nguồn dữ liệu, tổng hợp theo giờ (trung bình), chuẩn hoá đơn vị như trên, rồi tính đặc trưng ngày bằng các script trong `scripts/`. Dữ liệu trong repo là kết quả đã kiểm tra ngày 07/11/2026.
