@@ -100,6 +100,10 @@ outputs/
   clustering_system_1403.png
   association_rules.csv                # báo cáo Phase 3 (179 luật, Support/Confidence/Lift)
   association_report.json              # ngưỡng rời rạc hoá + 15 luật mạnh nhất mỗi hệ
+  anomaly_report.json                  # báo cáo Phase 4 (IF + OC-SVM, case study)
+  anomaly_system_4.csv                 # giờ bị Isolation Forest gắn cờ, System 4
+  anomaly_system_1278.csv
+  anomaly_system_1403.csv
 ```
 
 Cột chung trong file hourly cả năm: `timestamp, ac_power_w, dc_power_w, poa_irradiance_wm2, ambient_temp_c, module_temp_c, n_samples` (System 1278 thêm độ ẩm và gió, System 1403 thêm `poa_refcell_wm2`).

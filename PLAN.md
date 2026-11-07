@@ -99,20 +99,42 @@ bằng tính hợp lý của các ca phát hiện được. Không thêm Deep Le
   bức xạ nên luật có temp ở hệ này một phần là hệ quả của bức xạ, không phải
   nguyên nhân độc lập. System 1278 nhiệt độ môi trường thiếu 719 giờ, chủ yếu tháng 12.
 
-## Phase 4 — Anomaly detection
+## Phase 4 — Anomaly detection (đã xong, 07/11/2026)
 
 - **Mục tiêu:** tìm giờ/ngày công suất không khớp với thời tiết.
 - **Input:** `data/processed/` giờ ban ngày + cờ outlier từ Phase 1.
 - **Phương pháp:** Isolation Forest và One-Class SVM (Methods M4), đặc trưng:
-  công suất/kW, bức xạ, nhiệt độ module, tỉ số công suất/bức xạ.
-- **Script:** `scripts/anomaly.py` → `outputs/anomaly_report.json`.
-- **Case study bắt buộc:** System 1403 ngày 15/06/2015 (inverter 1 = 0 cả ngày),
-  System 1278 ngày 03/07/2015 (chỉ 68/96 dòng thô, thiếu nhiều),
-  System 4 các giờ bức xạ cao/công suất thấp mùa đông.
-- **Đánh giá:** KHÔNG báo % accuracy (không có nhãn). Đánh giá bằng: ca phát hiện
-  có khớp với sự cố đã biết không, có giải thích vật lý không, tỉ lệ cảnh báo
-  có hợp lý không (không phải 30–40% số giờ).
-- **Xong khi:** có danh sách anomaly theo từng hệ + 3–5 ca phân tích chi tiết.
+  công suất/kW, bức xạ, nhiệt độ module, tỉ số công suất/bức xạ. Tỉ lệ anomaly
+  kỳ vọng 5% cho cả 2 mô hình (contamination/nu = 0,05).
+- **Script:** `scripts/anomaly.py` → `outputs/anomaly_report.json`,
+  `outputs/anomaly_system_<id>.csv`, `outputs/anomaly_system_<id>.png` (biểu đồ, local).
+- **Kết quả:** Isolation Forest gắn cờ đúng ~5% giờ ban ngày mỗi hệ
+  (System 4: 187 giờ, 5,01%; System 1278: 200 giờ, 5,01%; System 1403: 191 giờ, 5,0%).
+  One-Class SVM gắn cờ tương tự (185 / 204 / 191 giờ). Hai mô hình đồng thuận
+  94,8–96,3% số giờ; cả 2 cùng gắn cờ 88 / 128 / 118 giờ. Chỉ 27–37% số giờ
+  IQR-outlier của Phase 1 bị Isolation Forest gắn cờ — IQR rộng hơn, IF chặt hơn.
+- **Case study:**
+  - System 4: 28/28 giờ bức xạ > 800 W/m² nhưng công suất < 10% định mức bị
+    Isolation Forest gắn cờ (One-Class SVM: 24/28). Các giờ này gom thành từng
+    đợt nhiều giờ: 02/03, 29/06, 28/11, 30/11 — không phải nhiễu 1 giờ lẻ.
+    Giờ bất thường nhất: 02/03 12:00, bức xạ 1.244 W/m² mà công suất chỉ 70 W/kW
+    (tỉ số 0,057). Lưu ý: bức xạ trên 1.200 W/m² bản thân đã rất cao, có thể là
+    hiệu ứng mây (cloud edge) hoặc cảm biến — ghi vào report.
+  - System 1403, 15/06/2015 (inverter 1 = 0 cả ngày): 7/12 giờ ban ngày bị IF
+    gắn cờ, 5/12 bị OC-SVM gắn cờ, 4/12 cả 2 cùng gắn cờ — phát hiện được một
+    phần, vì công suất chỉ giảm còn khoảng một nửa (1 inverter còn chạy) nên
+    một số giờ vẫn nằm trong phân phối bình thường. Giờ bất thường nhất toàn năm:
+    05–06/11, công suất 0 W/kW trong khi bức xạ 870–1.030 W/m² (mất phát hoàn toàn
+    giữa trưa) và 09/03 14:00 tương tự — đây là các ca mất phát rõ nhất.
+  - System 1278, 03/07/2015 (file thô chỉ 68/96 dòng): chỉ còn 12 giờ ban ngày
+    trong tập phân tích, IF gắn cờ 3/12, OC-SVM 5/12. Hạn chế: dữ liệu thiếu hẳn
+    thì mô hình không gắn cờ được — bản thân việc thiếu dữ liệu mới là anomaly,
+    phải phát hiện bằng kiểm tra tính đầy đủ (Phase 1), không phải bằng IF.
+- **Hạn chế ghi vào report:** IF gắn cờ cả 2 phía của phân phối — cả giờ công suất
+  quá thấp so với bức xạ (nghi lỗi) lẫn giờ tỉ số công suất/bức xạ quá cao
+  (vd System 1278 các giờ 07:00–08:00 tháng 11–12, tỉ số ~0,9–1,07 ở bức xạ thấp,
+  có thể là giờ bình minh, không phải lỗi). KHÔNG báo % accuracy vì không có nhãn.
+- **Xong khi:** có danh sách anomaly theo từng hệ + 3 ca phân tích chi tiết (đã có).
 
 ## Phase 5 — Report (Project W2–W4)
 
