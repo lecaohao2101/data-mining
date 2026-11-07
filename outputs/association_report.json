@@ -1,0 +1,400 @@
+[
+  {
+    "system_id": 4,
+    "variables": {
+      "irr": {
+        "column": "poa_irradiance_wm2",
+        "low_max": 268.29,
+        "medium_max": 679.1
+      },
+      "temp": {
+        "column": "ambient_temp_c",
+        "low_max": 11.42,
+        "medium_max": 21.0
+      },
+      "power": {
+        "column": "power_per_kw",
+        "low_max": 189.28,
+        "medium_max": 533.14
+      }
+    },
+    "daytime_hours": 3736,
+    "transactions_used": 3736,
+    "transactions_dropped_missing": 0,
+    "n_frequent_itemsets_apriori": 39,
+    "n_frequent_itemsets_fpgrowth": 39,
+    "apriori_equals_fpgrowth": true,
+    "n_rules_lift_gt_1_conf_ge_0_5": 26,
+    "top_power_rules": [
+      {
+        "antecedents": "irr=High, temp=Medium",
+        "consequents": "power=High",
+        "support": 0.116,
+        "confidence": 0.998,
+        "lift": 2.99
+      },
+      {
+        "antecedents": "irr=Medium, temp=High",
+        "consequents": "power=Medium",
+        "support": 0.124,
+        "confidence": 0.987,
+        "lift": 2.96
+      },
+      {
+        "antecedents": "irr=High, temp=High",
+        "consequents": "power=High",
+        "support": 0.135,
+        "confidence": 0.982,
+        "lift": 2.95
+      },
+      {
+        "antecedents": "irr=High",
+        "consequents": "power=High",
+        "support": 0.318,
+        "confidence": 0.954,
+        "lift": 2.86
+      },
+      {
+        "antecedents": "irr=Medium, temp=Medium",
+        "consequents": "power=Medium",
+        "support": 0.106,
+        "confidence": 0.945,
+        "lift": 2.84
+      },
+      {
+        "antecedents": "irr=Low, temp=Low",
+        "consequents": "power=Low",
+        "support": 0.149,
+        "confidence": 0.938,
+        "lift": 2.81
+      },
+      {
+        "antecedents": "irr=Low",
+        "consequents": "power=Low",
+        "support": 0.307,
+        "confidence": 0.921,
+        "lift": 2.76
+      },
+      {
+        "antecedents": "irr=Low, temp=High",
+        "consequents": "power=Low",
+        "support": 0.064,
+        "confidence": 0.916,
+        "lift": 2.75
+      },
+      {
+        "antecedents": "irr=Medium",
+        "consequents": "power=Medium",
+        "support": 0.303,
+        "confidence": 0.908,
+        "lift": 2.73
+      },
+      {
+        "antecedents": "irr=Low, temp=Medium",
+        "consequents": "power=Low",
+        "support": 0.094,
+        "confidence": 0.9,
+        "lift": 2.7
+      },
+      {
+        "antecedents": "irr=High, temp=Low",
+        "consequents": "power=High",
+        "support": 0.067,
+        "confidence": 0.841,
+        "lift": 2.52
+      },
+      {
+        "antecedents": "irr=Medium, temp=Low",
+        "consequents": "power=Medium",
+        "support": 0.073,
+        "confidence": 0.762,
+        "lift": 2.29
+      },
+      {
+        "antecedents": "temp=Low",
+        "consequents": "power=Low",
+        "support": 0.174,
+        "confidence": 0.521,
+        "lift": 1.56
+      }
+    ]
+  },
+  {
+    "system_id": 1278,
+    "variables": {
+      "irr": {
+        "column": "poa_irradiance_wm2",
+        "low_max": 447.73,
+        "medium_max": 848.05
+      },
+      "temp": {
+        "column": "ambient_temp_c",
+        "low_max": 21.48,
+        "medium_max": 32.46
+      },
+      "humidity": {
+        "column": "relative_humidity_pct",
+        "low_max": 13.16,
+        "medium_max": 25.06
+      },
+      "wind": {
+        "column": "wind_speed_ms",
+        "low_max": 0.04,
+        "medium_max": 0.61
+      },
+      "power": {
+        "column": "power_per_kw",
+        "low_max": 268.59,
+        "medium_max": 516.46
+      }
+    },
+    "daytime_hours": 4001,
+    "transactions_used": 3778,
+    "transactions_dropped_missing": 223,
+    "n_frequent_itemsets_apriori": 159,
+    "n_frequent_itemsets_fpgrowth": 159,
+    "apriori_equals_fpgrowth": true,
+    "n_rules_lift_gt_1_conf_ge_0_5": 111,
+    "top_power_rules": [
+      {
+        "antecedents": "irr=Low, wind=Low",
+        "consequents": "power=Low",
+        "support": 0.125,
+        "confidence": 0.967,
+        "lift": 2.9
+      },
+      {
+        "antecedents": "humidity=Low, irr=High",
+        "consequents": "power=High",
+        "support": 0.149,
+        "confidence": 0.954,
+        "lift": 2.86
+      },
+      {
+        "antecedents": "irr=Low, temp=Medium",
+        "consequents": "power=Low",
+        "support": 0.111,
+        "confidence": 0.954,
+        "lift": 2.86
+      },
+      {
+        "antecedents": "irr=High, temp=High",
+        "consequents": "power=High",
+        "support": 0.156,
+        "confidence": 0.95,
+        "lift": 2.85
+      },
+      {
+        "antecedents": "irr=Low, temp=Low",
+        "consequents": "power=Low",
+        "support": 0.133,
+        "confidence": 0.951,
+        "lift": 2.85
+      },
+      {
+        "antecedents": "humidity=Medium, irr=Low",
+        "consequents": "power=Low",
+        "support": 0.081,
+        "confidence": 0.95,
+        "lift": 2.85
+      },
+      {
+        "antecedents": "irr=High, wind=Medium",
+        "consequents": "power=High",
+        "support": 0.122,
+        "confidence": 0.949,
+        "lift": 2.85
+      },
+      {
+        "antecedents": "humidity=Low, irr=Low",
+        "consequents": "power=Low",
+        "support": 0.08,
+        "confidence": 0.95,
+        "lift": 2.85
+      },
+      {
+        "antecedents": "irr=Low",
+        "consequents": "power=Low",
+        "support": 0.316,
+        "confidence": 0.948,
+        "lift": 2.84
+      },
+      {
+        "antecedents": "humidity=High, irr=Low",
+        "consequents": "power=Low",
+        "support": 0.155,
+        "confidence": 0.947,
+        "lift": 2.84
+      },
+      {
+        "antecedents": "irr=Low, wind=Medium",
+        "consequents": "power=Low",
+        "support": 0.101,
+        "confidence": 0.945,
+        "lift": 2.83
+      },
+      {
+        "antecedents": "irr=High, temp=Medium",
+        "consequents": "power=High",
+        "support": 0.105,
+        "confidence": 0.943,
+        "lift": 2.83
+      },
+      {
+        "antecedents": "irr=Low, temp=High",
+        "consequents": "power=Low",
+        "support": 0.073,
+        "confidence": 0.936,
+        "lift": 2.8
+      },
+      {
+        "antecedents": "irr=Low, wind=High",
+        "consequents": "power=Low",
+        "support": 0.091,
+        "confidence": 0.927,
+        "lift": 2.78
+      },
+      {
+        "antecedents": "irr=High",
+        "consequents": "power=High",
+        "support": 0.307,
+        "confidence": 0.921,
+        "lift": 2.76
+      }
+    ]
+  },
+  {
+    "system_id": 1403,
+    "variables": {
+      "irr": {
+        "column": "poa_irradiance_wm2",
+        "low_max": 311.14,
+        "medium_max": 651.11
+      },
+      "temp": {
+        "column": "module_temp_c",
+        "low_max": 34.37,
+        "medium_max": 45.85
+      },
+      "power": {
+        "column": "power_per_kw",
+        "low_max": 226.99,
+        "medium_max": 531.29
+      }
+    },
+    "daytime_hours": 3818,
+    "transactions_used": 3818,
+    "transactions_dropped_missing": 0,
+    "n_frequent_itemsets_apriori": 31,
+    "n_frequent_itemsets_fpgrowth": 31,
+    "apriori_equals_fpgrowth": true,
+    "n_rules_lift_gt_1_conf_ge_0_5": 42,
+    "top_power_rules": [
+      {
+        "antecedents": "irr=Low",
+        "consequents": "power=Low, temp=Low",
+        "support": 0.266,
+        "confidence": 0.797,
+        "lift": 3.0
+      },
+      {
+        "antecedents": "irr=High",
+        "consequents": "power=High, temp=High",
+        "support": 0.241,
+        "confidence": 0.723,
+        "lift": 2.95
+      },
+      {
+        "antecedents": "irr=Low, temp=Low",
+        "consequents": "power=Low",
+        "support": 0.266,
+        "confidence": 0.968,
+        "lift": 2.9
+      },
+      {
+        "antecedents": "irr=High, temp=Medium",
+        "consequents": "power=High",
+        "support": 0.063,
+        "confidence": 0.964,
+        "lift": 2.89
+      },
+      {
+        "antecedents": "irr=Medium",
+        "consequents": "power=Medium, temp=Medium",
+        "support": 0.19,
+        "confidence": 0.569,
+        "lift": 2.86
+      },
+      {
+        "antecedents": "irr=Low",
+        "consequents": "power=Low",
+        "support": 0.317,
+        "confidence": 0.952,
+        "lift": 2.86
+      },
+      {
+        "antecedents": "irr=High",
+        "consequents": "power=High",
+        "support": 0.315,
+        "confidence": 0.943,
+        "lift": 2.83
+      },
+      {
+        "antecedents": "irr=High, temp=High",
+        "consequents": "power=High",
+        "support": 0.241,
+        "confidence": 0.936,
+        "lift": 2.81
+      },
+      {
+        "antecedents": "irr=Medium, temp=High",
+        "consequents": "power=Medium",
+        "support": 0.07,
+        "confidence": 0.917,
+        "lift": 2.75
+      },
+      {
+        "antecedents": "irr=Medium, temp=Medium",
+        "consequents": "power=Medium",
+        "support": 0.19,
+        "confidence": 0.91,
+        "lift": 2.73
+      },
+      {
+        "antecedents": "irr=Medium",
+        "consequents": "power=Medium",
+        "support": 0.302,
+        "confidence": 0.906,
+        "lift": 2.72
+      },
+      {
+        "antecedents": "irr=Low, temp=Medium",
+        "consequents": "power=Low",
+        "support": 0.052,
+        "confidence": 0.88,
+        "lift": 2.64
+      },
+      {
+        "antecedents": "temp=Low",
+        "consequents": "irr=Low, power=Low",
+        "support": 0.266,
+        "confidence": 0.797,
+        "lift": 2.51
+      },
+      {
+        "antecedents": "temp=Low",
+        "consequents": "power=Low",
+        "support": 0.266,
+        "confidence": 0.797,
+        "lift": 2.39
+      },
+      {
+        "antecedents": "temp=High",
+        "consequents": "irr=High, power=High",
+        "support": 0.241,
+        "confidence": 0.723,
+        "lift": 2.3
+      }
+    ]
+  }
+]

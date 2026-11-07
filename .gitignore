@@ -3,15 +3,14 @@ __pycache__/
 .venv/
 .DS_Store
 
-# --- Data đã xử lý: DO CODE TẠO RA, KHÔNG ĐƯA LÊN GIT ---
+# --- Data trung gian: DO CODE TẠO RA, KHÔNG ĐƯA LÊN GIT ---
 # Trong git chỉ giữ: data thô (data/raw_full/), metadata (data/metadata/),
-# code (scripts/), docs và report. Chạy `python scripts/run_pipeline.py`
-# để tạo lại toàn bộ data đã xử lý và kết quả ở máy local.
+# code (scripts/), docs, report VÀ KẾT QUẢ (outputs/*.json, outputs/*.csv).
+# Các file data trung gian dưới đây chạy `python scripts/run_pipeline.py`
+# là tạo lại y hệt ở máy local, nên không cần đưa lên git.
 # (Ngoại lệ: data/hourly_full_year/README.md và systems.csv là tài liệu,
 # vẫn giữ trong git; chỉ file CSV theo giờ là do code tạo ra.)
 data/hourly_full_year/system_*.csv
 data/daily_full_year/*.csv
 data/processed/*.csv
-outputs/*.json
-outputs/*.csv
 outputs/*.png

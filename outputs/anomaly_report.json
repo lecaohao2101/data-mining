@@ -1,0 +1,391 @@
+[
+  {
+    "system_id": 4,
+    "features": [
+      "power_per_kw",
+      "poa_irradiance_wm2",
+      "module_temp_c",
+      "irr_ratio"
+    ],
+    "contamination_nu": 0.05,
+    "daytime_hours": 3736,
+    "hours_used": 3736,
+    "hours_dropped_missing": 0,
+    "if_anomalies": 187,
+    "if_rate_pct": 5.01,
+    "ocsvm_anomalies": 185,
+    "ocsvm_rate_pct": 4.95,
+    "both_anomalies": 88,
+    "agreement_if_ocsvm_pct": 94.8,
+    "phase1_iqr_overlap_if_pct": 32.2,
+    "case_study": {
+      "label": "giờ bức xạ > 800 W/m² nhưng công suất < 10% định mức (Phase 1)",
+      "n_low_power_high_irr_hours": 28,
+      "if_flagged_of_those": 28,
+      "ocsvm_flagged_of_those": 24,
+      "both_flagged_of_those": 24
+    },
+    "top_if_anomalies": [
+      {
+        "timestamp": "2015-03-02 12:00:00",
+        "ac_power_w": 70.4,
+        "power_per_kw": 70.4,
+        "poa_irradiance_wm2": 1243.7,
+        "module_temp_c": 36.7,
+        "irr_ratio": 0.057,
+        "if_score": -0.138,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-06-29 12:00:00",
+        "ac_power_w": 2.6,
+        "power_per_kw": 2.6,
+        "poa_irradiance_wm2": 951.5,
+        "module_temp_c": 56.1,
+        "irr_ratio": 0.003,
+        "if_score": -0.136,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-06-29 11:00:00",
+        "ac_power_w": 2.6,
+        "power_per_kw": 2.6,
+        "poa_irradiance_wm2": 974.5,
+        "module_temp_c": 56.6,
+        "irr_ratio": 0.003,
+        "if_score": -0.136,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-11-28 11:00:00",
+        "ac_power_w": 43.6,
+        "power_per_kw": 43.6,
+        "poa_irradiance_wm2": 1293.9,
+        "module_temp_c": 1.8,
+        "irr_ratio": 0.034,
+        "if_score": -0.134,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-11-30 11:00:00",
+        "ac_power_w": 93.5,
+        "power_per_kw": 93.5,
+        "poa_irradiance_wm2": 1242.9,
+        "module_temp_c": 34.0,
+        "irr_ratio": 0.075,
+        "if_score": -0.131,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-03-02 11:00:00",
+        "ac_power_w": 30.3,
+        "power_per_kw": 30.3,
+        "poa_irradiance_wm2": 1176.3,
+        "module_temp_c": 35.1,
+        "irr_ratio": 0.026,
+        "if_score": -0.131,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-11-28 12:00:00",
+        "ac_power_w": 72.7,
+        "power_per_kw": 72.7,
+        "poa_irradiance_wm2": 1266.6,
+        "module_temp_c": 16.8,
+        "irr_ratio": 0.057,
+        "if_score": -0.131,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-01-22 10:00:00",
+        "ac_power_w": 24.3,
+        "power_per_kw": 24.3,
+        "poa_irradiance_wm2": 1139.0,
+        "module_temp_c": 33.6,
+        "irr_ratio": 0.021,
+        "if_score": -0.124,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-06-29 10:00:00",
+        "ac_power_w": 2.6,
+        "power_per_kw": 2.6,
+        "poa_irradiance_wm2": 905.4,
+        "module_temp_c": 52.4,
+        "irr_ratio": 0.003,
+        "if_score": -0.124,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-02-17 12:00:00",
+        "ac_power_w": 25.7,
+        "power_per_kw": 25.7,
+        "poa_irradiance_wm2": 1181.7,
+        "module_temp_c": 24.8,
+        "irr_ratio": 0.022,
+        "if_score": -0.12,
+        "ocsvm_also_flags": true
+      }
+    ]
+  },
+  {
+    "system_id": 1278,
+    "features": [
+      "power_per_kw",
+      "poa_irradiance_wm2",
+      "module_temp_c",
+      "irr_ratio"
+    ],
+    "contamination_nu": 0.05,
+    "daytime_hours": 4001,
+    "hours_used": 3995,
+    "hours_dropped_missing": 6,
+    "if_anomalies": 200,
+    "if_rate_pct": 5.01,
+    "ocsvm_anomalies": 204,
+    "ocsvm_rate_pct": 5.11,
+    "both_anomalies": 128,
+    "agreement_if_ocsvm_pct": 96.3,
+    "phase1_iqr_overlap_if_pct": 36.5,
+    "case_study": {
+      "label": "file thô chỉ 68/96 dòng 15 phút, thiếu nhiều",
+      "date": "2015-07-03",
+      "daytime_hours_in_analysis": 12,
+      "if_flagged": 3,
+      "ocsvm_flagged": 5,
+      "both_flagged": 2
+    },
+    "top_if_anomalies": [
+      {
+        "timestamp": "2015-11-23 07:00:00",
+        "ac_power_w": 13025.0,
+        "power_per_kw": 76.0,
+        "poa_irradiance_wm2": 74.7,
+        "module_temp_c": -1.0,
+        "irr_ratio": 1.018,
+        "if_score": -0.106,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-12-03 07:00:00",
+        "ac_power_w": 10500.0,
+        "power_per_kw": 61.3,
+        "poa_irradiance_wm2": 64.6,
+        "module_temp_c": -0.9,
+        "irr_ratio": 0.949,
+        "if_score": -0.104,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-11-24 07:00:00",
+        "ac_power_w": 14500.0,
+        "power_per_kw": 84.6,
+        "poa_irradiance_wm2": 82.5,
+        "module_temp_c": 1.8,
+        "irr_ratio": 1.026,
+        "if_score": -0.097,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-12-07 08:00:00",
+        "ac_power_w": 23225.0,
+        "power_per_kw": 135.5,
+        "poa_irradiance_wm2": 126.5,
+        "module_temp_c": 5.3,
+        "irr_ratio": 1.072,
+        "if_score": -0.091,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-12-04 07:00:00",
+        "ac_power_w": 7725.0,
+        "power_per_kw": 45.1,
+        "poa_irradiance_wm2": 51.0,
+        "module_temp_c": 0.7,
+        "irr_ratio": 0.884,
+        "if_score": -0.091,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-11-22 07:00:00",
+        "ac_power_w": 10000.0,
+        "power_per_kw": 58.4,
+        "poa_irradiance_wm2": 64.9,
+        "module_temp_c": -0.3,
+        "irr_ratio": 0.899,
+        "if_score": -0.088,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-12-04 08:00:00",
+        "ac_power_w": 33200.0,
+        "power_per_kw": 193.7,
+        "poa_irradiance_wm2": 190.7,
+        "module_temp_c": 8.0,
+        "irr_ratio": 1.016,
+        "if_score": -0.077,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-02-23 08:00:00",
+        "ac_power_w": 23000.0,
+        "power_per_kw": 134.2,
+        "poa_irradiance_wm2": 136.5,
+        "module_temp_c": 6.4,
+        "irr_ratio": 0.983,
+        "if_score": -0.076,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-07-03 11:00:00",
+        "ac_power_w": 72150.0,
+        "power_per_kw": 421.0,
+        "poa_irradiance_wm2": 1102.8,
+        "module_temp_c": 58.2,
+        "irr_ratio": 0.382,
+        "if_score": -0.074,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-03-01 07:00:00",
+        "ac_power_w": 8150.0,
+        "power_per_kw": 47.6,
+        "poa_irradiance_wm2": 52.2,
+        "module_temp_c": 5.5,
+        "irr_ratio": 0.91,
+        "if_score": -0.073,
+        "ocsvm_also_flags": true
+      }
+    ]
+  },
+  {
+    "system_id": 1403,
+    "features": [
+      "power_per_kw",
+      "poa_irradiance_wm2",
+      "module_temp_c",
+      "irr_ratio"
+    ],
+    "contamination_nu": 0.05,
+    "daytime_hours": 3818,
+    "hours_used": 3818,
+    "hours_dropped_missing": 0,
+    "if_anomalies": 191,
+    "if_rate_pct": 5.0,
+    "ocsvm_anomalies": 191,
+    "ocsvm_rate_pct": 5.0,
+    "both_anomalies": 118,
+    "agreement_if_ocsvm_pct": 96.2,
+    "phase1_iqr_overlap_if_pct": 27.2,
+    "case_study": {
+      "label": "inverter 1 = 0 cả ngày, inverter 2 bình thường",
+      "date": "2015-06-15",
+      "daytime_hours_in_analysis": 12,
+      "if_flagged": 7,
+      "ocsvm_flagged": 5,
+      "both_flagged": 4
+    },
+    "top_if_anomalies": [
+      {
+        "timestamp": "2015-11-06 11:00:00",
+        "ac_power_w": 0.0,
+        "power_per_kw": 0.0,
+        "poa_irradiance_wm2": 967.6,
+        "module_temp_c": 60.9,
+        "irr_ratio": 0.0,
+        "if_score": -0.142,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-11-05 12:00:00",
+        "ac_power_w": 0.0,
+        "power_per_kw": 0.0,
+        "poa_irradiance_wm2": 977.8,
+        "module_temp_c": 56.8,
+        "irr_ratio": 0.0,
+        "if_score": -0.136,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-11-05 13:00:00",
+        "ac_power_w": 0.0,
+        "power_per_kw": 0.0,
+        "poa_irradiance_wm2": 908.0,
+        "module_temp_c": 55.1,
+        "irr_ratio": 0.0,
+        "if_score": -0.131,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-11-06 12:00:00",
+        "ac_power_w": 558.0,
+        "power_per_kw": 93.0,
+        "poa_irradiance_wm2": 1031.1,
+        "module_temp_c": 61.5,
+        "irr_ratio": 0.09,
+        "if_score": -0.131,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-11-05 11:00:00",
+        "ac_power_w": 0.0,
+        "power_per_kw": 0.0,
+        "poa_irradiance_wm2": 868.8,
+        "module_temp_c": 54.6,
+        "irr_ratio": 0.0,
+        "if_score": -0.128,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-03-09 14:00:00",
+        "ac_power_w": 0.0,
+        "power_per_kw": 0.0,
+        "poa_irradiance_wm2": 861.1,
+        "module_temp_c": 54.2,
+        "irr_ratio": 0.0,
+        "if_score": -0.127,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-11-06 10:00:00",
+        "ac_power_w": 0.0,
+        "power_per_kw": 0.0,
+        "poa_irradiance_wm2": 746.7,
+        "module_temp_c": 55.4,
+        "irr_ratio": 0.0,
+        "if_score": -0.125,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-11-05 10:00:00",
+        "ac_power_w": 0.0,
+        "power_per_kw": 0.0,
+        "poa_irradiance_wm2": 818.0,
+        "module_temp_c": 52.8,
+        "irr_ratio": 0.0,
+        "if_score": -0.124,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-11-05 14:00:00",
+        "ac_power_w": 0.0,
+        "power_per_kw": 0.0,
+        "poa_irradiance_wm2": 722.1,
+        "module_temp_c": 50.5,
+        "irr_ratio": 0.0,
+        "if_score": -0.124,
+        "ocsvm_also_flags": true
+      },
+      {
+        "timestamp": "2015-11-04 13:00:00",
+        "ac_power_w": 0.0,
+        "power_per_kw": 0.0,
+        "poa_irradiance_wm2": 734.8,
+        "module_temp_c": 52.6,
+        "irr_ratio": 0.0,
+        "if_score": -0.122,
+        "ocsvm_also_flags": true
+      }
+    ]
+  }
+]
