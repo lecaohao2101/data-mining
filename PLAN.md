@@ -71,18 +71,33 @@ bằng tính hợp lý của các ca phát hiện được. Không thêm Deep Le
   phải các cụm tách biệt rõ — silhouette 0,35–0,46 là trung bình, k = 2 là lựa
   chọn đơn giản và vững nhất, không nên ép k lớn hơn chỉ để có nhiều cụm.
 
-## Phase 3 — Association rules (luật kết hợp)
+## Phase 3 — Association rules (đã xong, 07/11/2026)
 
 - **Mục tiêu:** luật thời tiết → phát điện.
 - **Input:** `data/processed/` giờ ban ngày.
-- **Phương pháp:** rời rạc hoá trước (Low / Medium / High) cho bức xạ, nhiệt độ,
-  độ ẩm, gió và công suất (theo kW) — Apriori / FP-Growth (Methods M1).
-- **Script:** `scripts/association.py` → `outputs/association_rules.csv`.
-- **Đánh giá:** Support, Confidence, Lift; chỉ giữ luật có Lift > 1 và Support đủ lớn.
-- **Lưu ý:** System 1403 dùng `module_temp_c` thay cho `ambient_temp_c` (cảm biến
-  môi trường đọc cao); System 1278 nhiệt độ môi trường thiếu 719 giờ, chủ yếu tháng 12.
-- **Xong khi:** có 10–20 luật mạnh nhất mỗi hệ, kèm giải thích vật lý (vd: bức xạ cao
-  + nhiệt độ vừa → công suất cao).
+- **Phương pháp:** rời rạc hoá Low / Medium / High theo phân vị 1/3 và 2/3 riêng
+  từng hệ — Apriori và FP-Growth (Methods M1), min_support = 0,05, max_len = 3.
+  Hai thuật toán cho cùng tập frequent itemset (đã kiểm tra bằng assert trong code).
+- **Script:** `scripts/association.py` → `outputs/association_rules.csv`
+  (179 luật), `outputs/association_report.json`.
+- **Đánh giá:** chỉ giữ luật Lift > 1, Confidence >= 0,5, Support >= 0,05.
+- **Kết quả:** System 4: 26 luật; System 1278: 111 luật (có thêm độ ẩm + gió);
+  System 1403: 42 luật. Lift cao nhất ~2,9–3,0.
+- **Luật mạnh nhất (consequent là công suất):**
+  - Cả 3 hệ: `irr=High => power=High` (conf 0,94–0,95, lift ~2,85) và
+    `irr=Low => power=Low` (conf 0,92–0,95, lift ~2,8) — bức xạ quyết định công suất.
+  - System 4: `irr=High, temp=Medium => power=High` (conf 0,998, lift 2,99);
+    `irr=Medium, temp=High => power=Medium` (conf 0,987) — bức xạ vừa mà trời
+    nóng cũng không lên được công suất cao, phù hợp với hiệu ứng nhiệt làm giảm
+    hiệu suất pin.
+  - System 1278: `humidity=Low, irr=High => power=High` (conf 0,954) — độ ẩm thấp
+    là dấu hiệu trời quang ở sa mạc; `irr=High, wind=Medium => power=High`
+    (conf 0,949). Đã bỏ 223 giờ ban ngày thiếu nhiệt độ môi trường (chủ yếu tháng 12).
+  - System 1403: `irr=Low, temp=Low => power=Low` (conf 0,968, lift 2,90).
+- **Lưu ý ghi vào report:** System 1403 dùng `module_temp_c` thay cho
+  `ambient_temp_c` (cảm biến môi trường đọc cao); nhiệt độ module nóng lên theo
+  bức xạ nên luật có temp ở hệ này một phần là hệ quả của bức xạ, không phải
+  nguyên nhân độc lập. System 1278 nhiệt độ môi trường thiếu 719 giờ, chủ yếu tháng 12.
 
 ## Phase 4 — Anomaly detection
 
