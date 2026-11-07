@@ -117,20 +117,50 @@ Lưu ý: `ac_power_w` của System 1403 là tổng 2 inverter, không phải c�
 
 ## Cách chạy
 
+Chạy từ thư mục gốc của repo. Cần Python 3.12 trở lên.
+
 ```bash
+# 1. Cài đặt (chỉ làm 1 lần)
 pip install -r requirements.txt
-python scripts/run_pipeline.py          # chạy toàn bộ pipeline, tạo ra mọi data đã xử lý + kết quả
-python scripts/inspect_data.py          # xem data đã xử lý như thế nào, rồi mới viết report
+
+# 2. Chạy toàn bộ pipeline — tạo ra mọi data đã xử lý + kết quả
+python scripts/run_pipeline.py
+# Chạy lại từ đầu: xóa data đã xử lý rồi chạy lại, kết quả ra y hệt
+# (đã kiểm tra: data theo giờ khớp tới ~1e-12, association/anomaly giống hệt)
+
+# 3. Xem data đã xử lý như thế nào, rồi mới viết report
+python scripts/inspect_data.py
 ```
 
 Pipeline chạy theo thứ tự: build hourly 2015 (tải từ S3 public) → đặc trưng ngày
 → tiền xử lý + outlier (Phase 1) → clustering (Phase 2) → luật kết hợp (Phase 3)
-→ anomaly detection (Phase 4). Chạy từng bước riêng cũng được, vd:
+→ anomaly detection (Phase 4).
+
+### Chạy từng bước riêng
 
 ```bash
-python scripts/read_raw.py --system 4 --date 2015-01-01   # xem 1 file data thô
-python scripts/run_pipeline.py --skip-hourly              # bỏ bước tải hourly khi đã có sẵn
+# Xem data thô (tháng 1 + 7/2015 trong data/raw_full/)
+python scripts/read_raw.py --system 4 --date 2015-01-01
+python scripts/read_raw.py --system 1278 --list --month 2015-07
+python scripts/read_raw.py --system 1403 --date 2015-06-15 --head 10
+
+# Từng bước của pipeline (mỗi lệnh chạy độc lập, không cần đối số)
+python scripts/build_hourly_2015.py    # data/hourly_full_year/
+python scripts/build_daily_full_year.py # data/daily_full_year/
+python scripts/preprocess.py           # Phase 1: data/processed/*_hourly_clean.csv
+python scripts/clustering.py           # Phase 2: daily features + clustering_report.json
+python scripts/association.py          # Phase 3: association_rules.csv
+python scripts/anomaly.py              # Phase 4: anomaly_report.json + anomaly_system_*.csv
+
+# Chạy lại chỉ một vài bước (khi đã có data hourly sẵn)
+python scripts/run_pipeline.py --skip-hourly
 python scripts/run_pipeline.py --only preprocess,clustering
+python scripts/run_pipeline.py --only anomaly
+
+# Chỉ xem một nhóm data đã xử lý
+python scripts/inspect_data.py --only hourly
+python scripts/inspect_data.py --only processed
+python scripts/inspect_data.py --only outputs
 ```
 
 Lộ trình làm từng phần xem `PLAN.md` (Phase 2 clustering, Phase 3 association,
