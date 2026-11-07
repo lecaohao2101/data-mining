@@ -136,20 +136,23 @@ bằng tính hợp lý của các ca phát hiện được. Không thêm Deep Le
   có thể là giờ bình minh, không phải lỗi). KHÔNG báo % accuracy vì không có nhãn.
 - **Xong khi:** có danh sách anomaly theo từng hệ + 3 ca phân tích chi tiết (đã có).
 
-## Phase 5 — Report (Project W2–W4)
+## Phase 5 — Report (đã xong, 07/11/2026)
 
-- **Proposal (W2):** đề tài, mục tiêu, data, phương pháp — viết từ README + PLAN này.
-- **Checkpoint (W3):** kết quả Phase 1–2 + 1–2 kết quả sơ bộ Phase 3–4.
-- **Final Report (W4):** cấu trúc gợi ý —
-  1. Giới thiệu + câu hỏi nghiên cứu
-  2. Nguồn dữ liệu (trích dẫn DOI, xem `docs/DATA_SOURCES.md`)
-  3. Tiền xử lý + vấn đề dữ liệu (Phase 1)
-  4. Clustering (Phase 2)
-  5. Association rules (Phase 3)
-  6. Anomaly detection (Phase 4)
-  7. Kết luận + hạn chế (múi giờ địa phương, cảm biến lỗi, không có nhãn anomaly)
+- **Proposal (W2):** đề tài, mục tiêu, data, phương pháp — trong README + PLAN này.
+- **Checkpoint (W3):** kết quả Phase 1–2 + kết quả sơ bộ Phase 3–4 — đã có trong
+  các report JSON ở `outputs/`.
+- **Final Report (W4):** `reports/final_report.md` (tiếng Anh, để nộp cho khóa học),
+  gồm 7 mục: 1. Giới thiệu + câu hỏi nghiên cứu, 2. Nguồn dữ liệu (trích dẫn DOI),
+  3. Tiền xử lý + vấn đề dữ liệu (Phase 1), 4. Clustering (Phase 2),
+  5. Association rules (Phase 3), 6. Anomaly detection (Phase 4),
+  7. Kết luận + hạn chế, kèm References và Appendix tái tạo.
+- **Kiểm chứng số liệu trước khi viết:** tổng năng lượng năm 2015 tính lại từ
+  `data/daily_full_year/` (System 4: 1.436,8 kWh; System 1278: 260.414,4 kWh;
+  System 1403: 9.067,6 kWh), tương quan công suất–bức xạ ban ngày tính lại từ
+  `data/hourly_full_year/` (0,942 / 0,980 / 0,964), và toàn bộ số liệu Phase 1–4
+  đọc lại từ các file trong `outputs/`.
 - **Xong khi:** report nộp được, mọi số liệu trong report đều truy được về
-  file trong `data/` hoặc `outputs/`.
+  file trong `data/` hoặc `outputs/` (đã xong).
 
 ## Thứ tự làm
 

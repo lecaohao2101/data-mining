@@ -92,6 +92,8 @@ scripts/
   build_hourly_2015.py                 # tái tạo bản theo giờ cả năm từ S3
   build_daily_full_year.py             # tính đặc trưng ngày từ bản theo giờ
   preprocess.py                        # Phase 1: tiền xử lý + gắn cờ outlier
+reports/
+  final_report.md                      # báo cáo cuối môn (tiếng Anh, Phase 5)
 outputs/
   preprocess_report.json               # báo cáo Phase 1 (số giờ thiếu, outlier...)
   clustering_report.json               # báo cáo Phase 2 (chọn k, mô tả cụm)
