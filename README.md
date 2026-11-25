@@ -102,7 +102,7 @@ outputs/
   clustering_system_1278.png
   clustering_system_1403.png
   association_rules.csv                # báo cáo Phase 3 (179 luật, Support/Confidence/Lift)
-  association_report.json              # ngưỡng rời rạc hoá + 15 luật mạnh nhất mỗi hệ
+  association_report.json              # ngưỡng rời rạc hoá + 15 luật mạnh nhất mỗi hệ (System 4: 13 luật power)
   anomaly_report.json                  # báo cáo Phase 4 (IF + OC-SVM, case study)
   anomaly_system_4.csv                 # giờ bị Isolation Forest gắn cờ, System 4
   anomaly_system_1278.csv

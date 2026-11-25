@@ -18,11 +18,14 @@ Cleaning rules (documented, applied before hourly averaging):
     as degC; Jan/Oct look plausible 19-36). Do not use it for association rules
     without an NSRDB cross-check; use module_temp / POA instead.
   - sys1403 ac_power = inv1_ac_power + inv2_ac_power (no system total column).
-    2015-06-15 inv1 reads 0 all day while inv2 is normal: a real one-day fault,
+    2015-06-11-16 inv1 reads 0 while inv2 is normal (worst 14-16 June, when POA
+    was ~930 W/m2 but AC peaked at only ~2.25 kW): a real multi-day fault,
     kept in the data as anomaly-detection material (do NOT delete it).
   - hourly value = mean of the sub-hourly samples in that hour; *_n = sample count.
 Output: data/hourly_full_year/system_{id}_2015_hourly.csv  (8760 rows each,
-UTC-naive local time as recorded in PVDAQ `measured_on`; systems are in
+UTC-naive local standard time as recorded in PVDAQ `measured_on` (no DST
+shift - PVDAQ timestamps run on standard time year-round, so they lag the
+local clock by 1 hour during daylight saving, Mar-Nov); systems are in
 different US timezones, so do NOT merge on timestamp without converting to a
 common timezone first). Hours with no raw samples at all (n_samples == 0,
 e.g. System 1403's two overnight gaps) are dropped as rows, not kept as NaN
@@ -31,7 +34,8 @@ rows — that is why System 1403 has 8,730 rows instead of 8,760.
 This script is step 1 of the pipeline (see scripts/run_pipeline.py). It
 downloads the raw day files from the public S3 lake and builds the hourly
 files that every later step reads. The hourly files are GENERATED data:
-they are not stored in git (see .gitignore); run this script to recreate them.
+they ARE stored in git (only outputs/*.png is excluded - see .gitignore);
+run this script to recreate them.
 
 Usage:  python scripts/build_hourly_2015.py [--out data/hourly_full_year]
 """

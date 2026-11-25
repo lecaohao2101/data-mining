@@ -38,9 +38,14 @@
   ~38,4 MB, giữ nguyên nội dung gốc). Chưa có data thô cả năm trong repo; bản đã xử lý
   cả năm được tái tạo từ S3 public bằng `scripts/build_hourly_2015.py`.
 - **Metadata:** `data/metadata/` — 3 file JSON gốc của PVDAQ cho 3 hệ.
-- **Lưu ý múi giờ:** timestamp là giờ địa phương từng bang (Golden / Las Vegas /
-  Cocoa Beach khác nhau). Đừng merge 3 hệ theo timestamp khi chưa đổi về chung
-  một múi giờ.
+- **Lưu ý múi giờ:** timestamp là giờ chuẩn địa phương (local standard time),
+  không đổi theo DST — từ tháng 3 đến tháng 11 lệch 1 giờ so với giờ đồng hồ
+  địa phương thật (ngày 08/03/2015 vẫn đủ 1.440 mẫu kể cả lúc 02:00).
+  Đừng merge 3 hệ theo timestamp khi chưa đổi về chung một múi giờ.
+- **Lưu ý metadata:** `started_on` trong JSON metadata là bản ghi hiện tại của
+  PVDAQ, không phải thời điểm bắt đầu đo — System 1403 ghi 2018-03-31 trong khi
+  `first_timestamp` trong systems list là 01/12/2014 và dữ liệu 2015 đang phân
+  tích vẫn tồn tại (System 1278 lệch nhẹ 2 ngày tương tự).
 
 ## Các hệ đã loại (để khỏi làm lại)
 

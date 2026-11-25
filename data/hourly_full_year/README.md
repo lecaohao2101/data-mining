@@ -26,7 +26,7 @@ Why these three: three different climates (BSk / Bwh / Cfa), three scales
 day-profiles can be compared across systems. Systems 4 and 1278 are PVDAQ
 QA `pass`; 1403 is QA `fail` — kept deliberately, see caveats below.
 
-Common columns: `timestamp` (local time as recorded by PVDAQ — the three
+Common columns: `timestamp` (local standard time as recorded by PVDAQ, no DST shift — the three
 sites are in different US timezones, so **do not merge on timestamp without
 converting to a common timezone**), `ac_power_w`, `poa_irradiance_wm2`,
 `ambient_temp_c`, `module_temp_c`, `n_samples` (raw samples in that hour).
@@ -49,11 +49,13 @@ Cleaning rules:
   sentinel readings, e.g. 2015-10-15).
 - Sys1403 module temps: per-sensor values > 100 °C → missing first
   (3276.7 °C is a failed-sensor sentinel), then **median** of the 8 sensors.
-  A plain mean is wrong here — sensor 8 is stuck at 3276.7 °C Mar–Aug 2015,
-  and on 2015-03-02/03 sensors 1–4 stuck simultaneously, so even the median
-  fails without the >100 °C mask.
-- Sys1403 `ambient_temp` > 80 °C → missing (single spike of 122.3 °C on
-  2015-10-08 11:00; the channel still reads high in warm months, see caveat 1).
+  A plain mean is wrong here — sensor 8 is stuck intermittently at
+  3276.7 °C Mar–Aug 2015 (e.g. 0 stuck samples on 10/15/31 July, 372/1,440
+  on 20 July, 507/1,440 on 25 July), and on 2015-03-02/03 sensors 1–4 stuck
+  simultaneously, so even the median fails without the >100 °C mask.
+- Sys1403 `ambient_temp` > 80 °C → missing (hourly mean of 122.3 °C for
+  2015-10-08 11:00, from 4 wild per-minute samples up to 3,006.2 °C; the
+  channel still reads high in warm months, see caveat 1).
 - Sys1403 `ac_power` = inv1 + inv2 inverter power.
 
 ## Validation results (2015, hourly files)
@@ -62,7 +64,7 @@ Cleaning rules:
 |---|---|---|---|
 | Hourly rows / missing hours | 8,760 / 0 | 8,760 / 0 | 8,730 / **30 missing** |
 | Missing `ac_power_w` | 0% | 0.25% (22 h) | 0% |
-| Missing `ambient_temp_c` | 0% | **8.2%** (711 h, mostly Dec) | 0% (122.3 °C spike on 2015-10-08 masked per-minute) |
+| Missing `ambient_temp_c` | 0% | **8.2%** (719 h; Nov 132, Dec 503) | 0% (122.3 °C hourly mean on 2015-10-08 masked per-minute) |
 | Missing `poa_irradiance` | 0% | 0.01% | 0% |
 | Missing `module_temp_c` | 0% | 0.01% | 0% |
 | Daytime hours (POA > 50) | 3,736 | 4,001 | 3,818 |
@@ -73,22 +75,24 @@ Cleaning rules:
 ## Caveats — read before analysing (these are report material, not reasons to drop the data)
 
 1. **Sys1403 `ambient_temp_c` reads high in warm months** (daytime means
-   ~44 °C in Jun–Aug, 1,373 hours above 45 °C, one 122.3 °C spike on
-   2015-10-08 11:00, removed by the >80 °C rule). Jan (19–36 °C) and Oct
+   ~44 °C in Jun–Aug, 1,352 daytime hours above 45 °C, one hourly mean of
+   122.3 °C on 2015-10-08 11:00 (4 wild per-minute samples, up to 3,006.2 °C),
+   removed by the >80 °C rule). Jan (19–36 °C) and Oct
    look plausible. Use `module_temp_c` (median of 8 sensors, sentinel-masked)
    and POA for weather rules on this system, and cross-check ambient against
    NSRDB if you need it.
 2. **Sys1403 module-temperature sensors fail with a 3276.7 °C sentinel:**
-   sensor 8 is stuck Mar–Aug 2015, and sensors 1–4 stuck simultaneously on
+   sensor 8 is stuck intermittently Mar–Aug 2015, and sensors 1–4 stuck simultaneously on
    2015-03-02 14:00–15:00 and 2015-03-03 10:00. Fixed in this build by
    masking >100 °C per sensor, then taking the median. A plain mean would
    give module temps up to 1,567 °C in March — check any re-run for this.
 3. **Sys1403 has two overnight data gaps:** 2015-04-16 16:00 → 2015-04-17 07:00
    (16 h) and 2015-06-04 20:00 → 2015-06-05 09:00 (14 h). Logger downtime,
    not missing days — both are overnight, so daytime analysis is unaffected.
-4. **Sys1403, 2015-06-15: inverter 1 reads 0 all day** while inverter 2 is
+4. **Sys1403, 2015-06-11–16: inverter 1 reads 0** while inverter 2 is
    normal; on 15 Jan / 15 Apr / 15 Oct both inverters peak at ~2.9 kW each.
-   A genuine one-day fault — keep it, it is ideal anomaly-detection material.
+   A genuine multi-day fault (worst 14–16 June; 15 June is the anomaly
+   case-study day) — keep it, it is ideal anomaly-detection material.
    Do not delete it in preprocessing.
 5. **Sys1278 ambient temperature degrades in late 2015:** missing by month
    is 1 h (Jul), 16 h (Sep), 67 h (Oct), 128 h (Nov), 499 h (Dec).
@@ -97,6 +101,18 @@ Cleaning rules:
    (e.g. POA > 50 W/m²), normalise power by each system's DC capacity
    (kW/kWp) before comparing systems, and never report anomaly-detection
    accuracy as a percentage — there are no ground-truth labels.
+7. **Timestamps are local standard time, not local clock time.** PVDAQ
+   timestamps do not shift for daylight saving: 8 March 2015 (spring
+   forward) still has 1,440 raw samples including 02:00, and 1 November
+   still has 1,440. From March to November the timestamps lag the local
+   clock by 1 hour. Do not join this data to external weather on local
+   clock time without shifting.
+8. **Metadata `started_on` is the current PVDAQ record, not the measurement
+   era.** System 1403's metadata says `started_on` 2018-03-31, but
+   `systems_20250729.csv` gives `first_timestamp` 2014-12-01 and the 2015
+   data analysed here exists — do not use `started_on` as the start of
+   measurement. System 1278 differs by 2 days the same way (metadata
+   2011-09-01 vs first_timestamp 2011-08-30).
 
 ## Rejected candidates (checked, not used)
 

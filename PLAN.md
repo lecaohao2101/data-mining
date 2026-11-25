@@ -66,8 +66,9 @@ bằng tính hợp lý của các ca phát hiện được. Không thêm Deep Le
   `data/processed/system_<id>_2015_daily_features.csv`.
 - **Kết quả:** K-Means chọn **k = 2 cho cả 3 hệ** (silhouette: System 4: 0,457;
   System 1278: 0,445; System 1403: 0,349; k = 3–6 đều thấp hơn rõ).
-  GMM theo BIC thì chọn k = 5–6 — BIC giảm dần theo k, tức GMM chia nhỏ thêm
-  theo mùa chứ không tìm ra cụm tách biệt mới, nên vẫn giữ k = 2 của K-Means.
+  GMM theo BIC thì chọn k = 6 cho System 4 và k = 5 cho System 1278 và 1403
+  (BIC tăng lại ở k = 6 ở 2 hệ sau), tức GMM chia nhỏ thêm theo mùa chứ không
+  tìm ra cụm tách biệt mới, nên vẫn giữ k = 2 của K-Means.
 - **Mô tả cụm (K-Means, k = 2):**
   - System 4: cụm cao 274 ngày (4,81 kWh/kW, bức xạ 572 W/m², nắng 10,8 h, 14,5 °C),
     cụm thấp 91 ngày (1,32 kWh/kW, bức xạ 256 W/m², nắng 8,5 h, 2,7 °C) — cụm thấp
@@ -99,7 +100,7 @@ bằng tính hợp lý của các ca phát hiện được. Không thêm Deep Le
 - **Kết quả:** System 4: 26 luật; System 1278: 111 luật (có thêm độ ẩm + gió);
   System 1403: 42 luật. Lift cao nhất ~2,9–3,0.
 - **Luật mạnh nhất (consequent là công suất):**
-  - Cả 3 hệ: `irr=High => power=High` (conf 0,94–0,95, lift ~2,85) và
+  - Cả 3 hệ: `irr=High => power=High` (conf 0,92–0,95, lift ~2,85) và
     `irr=Low => power=Low` (conf 0,92–0,95, lift ~2,8) — bức xạ quyết định công suất.
   - System 4: `irr=High, temp=Medium => power=High` (conf 0,998, lift 2,99);
     `irr=Medium, temp=High => power=Medium` (conf 0,987) — bức xạ vừa mà trời
@@ -131,16 +132,23 @@ bằng tính hợp lý của các ca phát hiện được. Không thêm Deep Le
 - **Case study:**
   - System 4: 28/28 giờ bức xạ > 800 W/m² nhưng công suất < 10% định mức bị
     Isolation Forest gắn cờ (One-Class SVM: 24/28). Các giờ này gom thành từng
-    đợt nhiều giờ: 02/03, 29/06, 28/11, 30/11 — không phải nhiễu 1 giờ lẻ.
+    đợt nhiều giờ: 17/02 (5 giờ, đợt lớn nhất), 02/03, 29/06, 28/11, 30/11 —
+    không phải nhiễu 1 giờ lẻ.
     Giờ bất thường nhất: 02/03 12:00, bức xạ 1.244 W/m² mà công suất chỉ 70 W/kW
     (tỉ số 0,057). Lưu ý: bức xạ trên 1.200 W/m² bản thân đã rất cao, có thể là
     hiệu ứng mây (cloud edge) hoặc cảm biến — ghi vào report.
   - System 1403, 15/06/2015 (inverter 1 = 0 cả ngày): 7/12 giờ ban ngày bị IF
     gắn cờ, 5/12 bị OC-SVM gắn cờ, 4/12 cả 2 cùng gắn cờ — phát hiện được một
     phần, vì công suất chỉ giảm còn khoảng một nửa (1 inverter còn chạy) nên
-    một số giờ vẫn nằm trong phân phối bình thường. Giờ bất thường nhất toàn năm:
-    05–06/11, công suất 0 W/kW trong khi bức xạ 870–1.030 W/m² (mất phát hoàn toàn
-    giữa trưa) và 09/03 14:00 tương tự — đây là các ca mất phát rõ nhất.
+    một số giờ vẫn nằm trong phân phối bình thường. Sự cố inverter này kéo dài
+    11–16/06, chắc chắn nhất 14–16/06 (POA ~930 W/m² mà AC max chỉ ~2,25 kW so
+    với 4,49 kW ngày 17/06). Giờ bất thường nhất toàn năm: 04–06/11, công suất
+    0 W/kW trong khi bức xạ tới 978 W/m² (mất phát hoàn toàn giữa trưa, bắt đầu
+    từ 04/11 09:00) và 09/03 14:00 tương tự — đây là các ca mất phát rõ nhất.
+    (Số 1.030 W/m² thuộc giờ 06/11 12:00, khi công suất đã hồi phục một phần
+    558 W.) Ngoài ra System 1403 còn có khối toàn 0 ngày 26–28/08 (44 giờ liên
+    tiếp, mọi kênh = 0 nhưng vẫn có dòng, n_samples 59–60) — logger chết nhưng
+    vẫn ghi số 0, không phải NaN.
   - System 1278, 03/07/2015 (file thô chỉ 68/96 dòng): chỉ còn 12 giờ ban ngày
     trong tập phân tích, IF gắn cờ 3/12, OC-SVM 5/12. Hạn chế: dữ liệu thiếu hẳn
     thì mô hình không gắn cờ được — bản thân việc thiếu dữ liệu mới là anomaly,

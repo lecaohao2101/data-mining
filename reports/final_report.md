@@ -87,9 +87,10 @@ public S3 lake with `scripts/build_hourly_2015.py`. Annual energy totals in
 Daytime (irradiance > 50 W/m²) correlation between AC power and irradiance was
 0.942 (System 4), 0.980 (System 1278) and 0.964 (System 1403) — high, as
 expected, which is precisely why deviations from that relationship are
-informative. **Timezone warning:** timestamps are each site's local time
-(Golden, Las Vegas and Cocoa Beach differ); the three systems were never merged
-on timestamp without conversion.
+informative. **Timezone warning:** timestamps are each site's local standard
+time, with no daylight-saving shift (PVDAQ timestamps run on standard time
+year-round, so from March to November they lag the local clock by 1 hour);
+the three systems were never merged on timestamp without conversion.
 
 ## 3. Data understanding and preprocessing
 
@@ -127,7 +128,8 @@ System 1278 and 8 in System 1403.
 | Ambient temperature reads implausibly high in hot season (up to 58 °C) | 1403 | Use module temperature, not ambient temperature, for association rules on this system |
 | Ambient temperature missing 719 hours (8.2%), mostly December | 1278 | Raw temperature in °F, wind in mph (converted); 223 daytime hours dropped from association mining for this reason |
 | Two overnight gaps, 16 h (16–17 Apr) and 14 h (4–5 Jun) | 1403 | 30 hours absent as rows, not NaN |
-| Inverter 1 reads 0 all day while inverter 2 is normal | 1403, 15 Jun 2015 | Kept as anomaly-detection material (§6) |
+| 44 consecutive hours of all-zero readings, 26 Aug 15:00 – 28 Aug 10:00 | 1403 | Every channel (AC, irradiance, temperatures) reads 0, yet the rows are still present (n_samples 59–60 per hour), not NaN — the logger appears dead but still writing zeros; 27 Aug is all zeros for the whole day |
+| Inverter 1 reads 0 all day while inverter 2 is normal | 1403, 15 Jun 2015 | The fault in fact lasted 11–16 Jun (see §6); kept as anomaly-detection material |
 | Raw file of 3 Jul 2015 has only 68 of 96 15-minute rows; power missing 25%, irradiance/temperature missing 33.8% | 1278 | Found with `scripts/read_raw.py`; see §6 |
 
 System 1403 carries a QA `fail` flag in the PVDAQ systems list for its full
@@ -154,8 +156,9 @@ Models were run for k = 2–6; k was chosen by silhouette score (K-Means) and BI
 | 1403 | **0.349** | 0.310 | 0.294 | 0.309 | 0.303 | 5 |
 
 Silhouette falls sharply after k = 2, so k = 2 is the data-driven choice. GMM's
-BIC keeps decreasing up to k = 5–6, which means it splits further by season
-rather than finding new, well-separated patterns, so the K-Means choice was kept.
+BIC is lowest at k = 6 for System 4 but at k = 5 for Systems 1278 and 1403
+(rising again at k = 6), so GMM splits further by season rather than finding
+new, well-separated patterns, and the K-Means choice (k = 2) was kept.
 
 | System | High-output cluster | Low-output cluster |
 |---|---|---|
@@ -253,9 +256,13 @@ hour was flagged, including the most extreme hour, 2 March 12:00 — irradiance
 sensor effect, which the report records rather than hides. The Cocoa Beach
 inverter failure was only partly detected, because with one inverter still
 running, power was about half normal and some hours stayed inside the normal
-distribution. The clearest outages of the whole year were in fact in Cocoa
-Beach on 5–6 November: on 5 November power was 0 all day while irradiance
-reached 978 W/m² at midday, and on 6 November power stayed 0 through 11:00
+distribution. The fault in fact lasted 11–16 June, not just 15 June: on
+14–16 June, with plane-of-array irradiance of about 930 W/m², AC power peaked
+at only about 2.25 kW, against 4.49 kW on 17 June when both inverters were
+running again. The clearest outages of the whole year were in fact in Cocoa
+Beach on 4–6 November: power was already 0 from 09:00 on 4 November (525 W at
+08:00, irradiance up to 752 W/m² that day), 0 all day on 5 November while
+irradiance reached 978 W/m² at midday, and 0 through 11:00 on 6 November
 (irradiance 968 W/m²) before partly recovering from 12:00, plus 9 March 14:00
 (0 W/kW at 861 W/m²). The Las Vegas case
 shows a genuine limitation: hours that are missing entirely cannot be flagged
@@ -268,7 +275,9 @@ unusually high power/irradiance ratio, such as 07:00–08:00 hours in
 November–December in Las Vegas (ratio ≈ 0.9–1.07 at low irradiance), which are
 probably sunrise hours rather than faults. Flagged hours therefore need the
 physical review done above; the model alone does not distinguish a fault from
-an edge of the distribution.
+an edge of the distribution. The same blind spot applies to the 44-hour
+all-zero block in Cocoa Beach (26–28 August, §3): with irradiance reading 0,
+none of those hours counts as daytime, so they never enter the models at all.
 
 ## 7. Conclusion
 
@@ -283,7 +292,7 @@ an edge of the distribution.
 3. **Anomalies are real and checkable.** Isolation Forest and One-Class SVM
    agree on ~95% of hours at a 5% flag rate, recover all 28 known
    high-irradiance/low-power hours in Golden, and expose complete midday
-   outages in Cocoa Beach (5–6 November) that were not in the original case list.
+   outages in Cocoa Beach (4–6 November) that were not in the original case list.
 
 **Limitations.** (a) Daily patterns are a continuum, so clustering quality is
 moderate (silhouette 0.35–0.46). (b) Association rules use per-system tertiles,
@@ -292,7 +301,8 @@ in the report JSON. (c) For System 1403, temperature rules use module
 temperature, which partly follows irradiance. (d) Anomaly detection has no
 ground-truth labels, so no accuracy is claimed; missing data cannot be flagged
 by the models and must be caught by completeness checks. (e) Timestamps are
-local time per site; cross-system comparison on timestamp was avoided.
+local standard time per site (no daylight-saving shift); cross-system
+comparison on timestamp was avoided.
 (f) System 1403 carries a PVDAQ QA `fail` flag. (g) The analysis covers one
 year, 2015, and three systems; results may not generalise to other years or
 climates.
