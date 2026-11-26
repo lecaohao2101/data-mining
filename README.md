@@ -24,8 +24,7 @@ Mục tiêu: phân cụm mẫu phát điện theo ngày, tìm luật kết hợp
 Bộ data chốt để làm bài: **NREL PVDAQ, cả năm 2015, 3 hệ thống**. File thô gốc là 1 phút (System 4, 1403) hoặc 15 phút (System 1278).
 
 **Quy tắc của repo này: data thô + code + kết quả + data trung gian đều nằm trong git — tất cả data đã xử lý đều do code tạo ra khi chạy pipeline.**
-- **Data thô** trong `data/raw_full/` — 186 file ngày gốc PVDAQ tháng 1 và tháng 7/2015 (xem dưới).
-- **Data đã xử lý cả năm 2015** trong `data/hourly_full_year/` — 3 file theo giờ, 8.760 giờ/hệ (System 1403: 8.730 giờ, thiếu 30 giờ do 2 khoảng trống qua đêm tháng 4 và tháng 6), tổng 2,6 MB; và `data/daily_full_year/` — 3 file đặc trưng ngày, 365 ngày/hệ, tính từ bản theo giờ cả năm. **Các file này do code tạo ra khi chạy pipeline và CÓ trong git** (xem `.gitignore` và mục Cách chạy). Chạy `python scripts/run_pipeline.py` để tạo lại y hệt, rồi xem bằng `python scripts/inspect_data.py` trước khi viết report. **Kết quả cũng có trong git: `outputs/` (4 file report JSON, `association_rules.csv`, 3 file giờ anomaly)**, để người chấm xem trực tiếp mà không cần chạy code; chỉ biểu đồ PNG là không đẩy được lên git (công cụ push chỉ nhận file text) nên chạy lại script để xem. Tên cột là chữ thường (`ac_power_w`, `poa_irradiance_wm2`, …). Chi tiết kiểm tra cả năm, quy tắc làm sạch và các caveat xem trong `data/hourly_full_year/README.md`; script tái tạo bản theo giờ ở `scripts/build_hourly_2015.py`. Timestamp là giờ địa phương từng bang, đừng merge 3 hệ theo timestamp khi chưa đổi về chung một múi giờ.
+- **Data đã xử lý cả năm 2015** trong `data/hourly_full_year/` — 3 file theo giờ, 8.760 giờ/hệ (System 1403: 8.730 giờ, thiếu 30 giờ do 2 khoảng trống qua đêm tháng 4 và tháng 6), tổng 2,6 MB; và `data/daily_full_year/` — 3 file đặc trưng ngày, 365 ngày/hệ, tính từ bản theo giờ cả năm. **Các file này do code tạo ra khi chạy pipeline và CÓ trong git** (xem `.gitignore` và mục Cách chạy). Chạy `python scripts/run_pipeline.py` để tạo lại y hệt, rồi xem bằng `python scripts/inspect_data.py` trước khi viết report. **Kết quả cũng có trong git: `outputs/` (4 file report JSON, `association_rules.csv`, 3 file giờ anomaly)**, để người chấm xem trực tiếp mà không cần chạy code; chỉ biểu đồ PNG là không đẩy được lên git (công cụ push chỉ nhận file text) nên chạy lại script để xem. Tên cột là chữ thường (`ac_power_w`, `poa_irradiance_wm2`, …). Chi tiết kiểm tra cả năm, quy tắc làm sạch và các caveat xem trong `data/hourly_full_year/README.md`; script tái tạo bản theo giờ ở `scripts/build_hourly_2015.py`. Timestamp là giờ chuẩn địa phương từng bang (local standard time, không đổi theo DST — từ tháng 3 đến tháng 11 lệch 1 giờ so với giờ đồng hồ địa phương thật), đừng merge 3 hệ theo timestamp khi chưa đổi về chung một múi giờ.
 - **Data thô** trong `data/raw_full/` — 186 file ngày gốc PVDAQ tháng 1 và tháng 7/2015, giữ nguyên tên file và nội dung, tổng ~38,4 MB (System 4: 15,4 MB, System 1278: 1,1 MB, System 1403: 22,0 MB). Lưu ý: phần thô trong repo chỉ có tháng 1 + 7, chưa có thô cả năm; bản đã xử lý cả năm đã bao gồm các tháng còn lại.
 
 ## 3 hệ thống đã chốt
@@ -54,7 +53,9 @@ Cả 3 đều **đạt** để làm clustering / association / anomaly, với c�
 
 - **System 4:** bức xạ âm 47,1% số dòng (giá trị ban đêm khoảng −2 W/m², sai số cảm biến). Công suất âm chỉ 0,9%. → Clip bức xạ và công suất âm về 0 khi tính năng lượng, giữ lại để ghi nhận trong report.
 - **System 1278:** công suất âm 50,4% số dòng, ban đêm khoảng −400 đến −1.100 W (inverter standby / offset). Nhiệt độ gốc là °F, gió là mph. → Đổi đơn vị, clip công suất đêm về 0, không dùng giá trị âm làm mẫu phát điện.
-- **System 1403:** không có cột tổng công suất, phải cộng `inv1_ac_power + inv2_ac_power`. Cảm biến `module_temp_8` bị kẹt ở 3276,7 °C từ tháng 3 đến tháng 8/2015 — cảm biến hỏng, không phải nhiệt độ thật; bản cả năm đã loại giá trị trên 100 °C từng cảm biến rồi lấy **trung vị** của 8 cảm biến. Nhiệt độ môi trường đọc cao bất thường trong mùa nóng (tới 58 °C, có 1 spike 122,3 °C ngày 08/10/2015 đã loại theo quy tắc >80 °C). Hệ này trong danh sách systems của PVDAQ bị gắn QA `fail`, nhưng kiểm tra cả năm vẫn tương quan công suất–bức xạ 0,964 — vẫn dùng được, nhưng phải ghi rõ giới hạn này trong report.
+- **System 1403:** không có cột tổng công suất, phải cộng `inv1_ac_power + inv2_ac_power`. Cảm biến `module_temp_8` bị kẹt ở 3276,7 °C ngắt quãng từ tháng 3 đến tháng 8/2015 (0 mẫu kẹt ngày 10, 15, 31/07; 372/1.440 mẫu ngày 20/07; 507/1.440 mẫu ngày 25/07) — cảm biến hỏng, không phải nhiệt độ thật; bản cả năm đã loại giá trị trên 100 °C từng cảm biến rồi lấy **trung vị** của 8 cảm biến. Nhiệt độ môi trường đọc cao bất thường trong mùa nóng (tới 58 °C; trung bình giờ 11:00 ngày 08/10/2015 là 122,3 °C do 4 mẫu điên tới 3.006,2 °C, đã loại theo quy tắc >80 °C). Hệ này trong danh sách systems của PVDAQ bị gắn QA `fail`, nhưng kiểm tra cả năm vẫn tương quan công suất–bức xạ 0,964 — vẫn dùng được, nhưng phải ghi rõ giới hạn này trong report.
+- **System 1403:** mất phát từ 09:00 ngày 04/11/2015 (08:00 còn 525 W), công suất 0 cả ngày 05/11 (bức xạ tới 978 W/m²) tới 11:00 ngày 06/11 — ca mất phát rõ nhất cả năm, xem §6 trong report.
+- **System 1403:** 44 giờ liên tiếp toàn bộ kênh đọc 0, 26/08 15:00 – 28/08 10:00 (cả ngày 27/08 toàn 0) nhưng các dòng vẫn còn (n_samples 59–60/giờ) — logger có vẻ chết nhưng vẫn ghi số 0. Vì bức xạ đọc 0 nên các giờ này không vào tập phân tích ban ngày, mô hình anomaly không thấy được.
 - **Chung:** chỉ phân tích ban ngày (bức xạ > 50 W/m²) cho clustering / association; ban đêm công suất ≈ 0 là bình thường, không phải anomaly.
 
 ## Cấu trúc file
@@ -93,6 +94,11 @@ scripts/
   build_hourly_2015.py                 # tái tạo bản theo giờ cả năm từ S3
   build_daily_full_year.py             # tính đặc trưng ngày từ bản theo giờ
   preprocess.py                        # Phase 1: tiền xử lý + gắn cờ outlier
+  clustering.py                        # Phase 2: clustering ngày
+  association.py                       # Phase 3: luật kết hợp
+  anomaly.py                           # Phase 4: phát hiện bất thường
+  run_pipeline.py                      # chạy toàn bộ pipeline theo thứ tự
+  inspect_data.py                      # xem tóm tắt mọi data đã xử lý
 reports/
   final_report.md                      # báo cáo cuối môn (tiếng Anh, Phase 5)
 outputs/
@@ -188,7 +194,7 @@ notebook đó. Chi tiết xem `notebooks/README.md`.
 
 ## Cách tái tạo dữ liệu
 
-Tải lại dữ liệu gốc từ S3 public của OEDI theo đường dẫn ở mục Nguồn dữ liệu, tổng hợp theo giờ (trung bình), chuẩn hoá đơn vị như trên, rồi tính đặc trưng ngày bằng các script trong `scripts/`. Dữ liệu trong repo là kết quả đã kiểm tra ngày 07/11/2026.
+Tải lại dữ liệu gốc từ S3 public của OEDI theo đường dẫn ở mục Nguồn dữ liệu, tổng hợp theo giờ (trung bình), chuẩn hoá đơn vị như trên, rồi tính đặc trưng ngày bằng các script trong `scripts/`. Dữ liệu trong repo là kết quả đã kiểm tra ngày 07/11/2026 và kiểm chứng lại ngày 25/11/2026 (tổng năng lượng, số giờ ban ngày, tương quan, 179 luật khớp tới 0,1 kWh; các mâu thuẫn thời gian đã sửa, xem commit mới nhất).
 
 ## Trích dẫn
 
