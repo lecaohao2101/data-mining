@@ -1,7 +1,5 @@
 # Mining Solar Power Generation Data for Pattern Discovery and Anomaly Detection
 
-Bài tập cuối môn **Data Mining** — Specialization *Data Mining Foundations and Practice* (University of Colorado Boulder, Coursera, qua FPT University).
-
 Mục tiêu: phân cụm mẫu phát điện theo ngày, tìm luật kết hợp giữa thời tiết và hiệu suất phát điện, và phát hiện bất thường khi công suất không khớp với bức xạ.
 
 - Clustering: K-Means / GMM trên đặc trưng ngày
@@ -193,11 +191,8 @@ Cột trong file daily cả năm: `date, system_id, n_hours, energy_kWh, ac_powe
 Lưu ý: `ac_power_w` của System 1403 là tổng 2 inverter, không phải cột gốc; `dc_power_w` của System 1403 không có trong bản cả năm.
 
 ## Cách chạy
-
-Chạy từ thư mục gốc của repo. Cần Python 3.12 trở lên.
-
 ```bash
-# 1. Cài đặt (chỉ làm 1 lần)
+# 1. Cài đặt 
 pip install -r requirements.txt
 
 # 2. Chạy toàn bộ pipeline — tạo ra mọi data đã xử lý + kết quả
