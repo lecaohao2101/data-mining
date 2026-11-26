@@ -8,6 +8,38 @@ Mục tiêu: phân cụm mẫu phát điện theo ngày, tìm luật kết hợp
 - Association rules: Apriori / FP-Growth sau khi rời rạc hoá thời tiết và công suất (Low / Medium / High), đánh giá bằng Support, Confidence, Lift
 - Anomaly detection: Isolation Forest / One-Class SVM trên công suất so với bức xạ
 
+## Dự án này làm gì
+
+Khai phá 1 năm dữ liệu phát điện mặt trời (2015) của 3 hệ quang điện để trả lời 3 câu hỏi: ngày phát điện có mấy dạng, thời tiết nào kéo công suất lên hay xuống, và giờ nào công suất bất thường so với thời tiết — tức dấu hiệu hỏng hóc. Chỉ dùng các phương pháp đã học trong môn, không dùng deep learning.
+
+**Câu hỏi nghiên cứu**
+
+1. **Clustering:** ngày phát điện có những dạng nào lặp lại?
+2. **Association rules:** điều kiện thời tiết nào gắn với công suất cao/thấp, và mạnh tới mức nào?
+3. **Anomaly detection:** giờ nào công suất không khớp với bức xạ, và có đúng là sự cố thật không?
+
+**Cách làm — pipeline 6 bước, chạy bằng `python scripts/run_pipeline.py`**
+
+1. Tải data thô 2015 từ S3 public của NREL, tổng hợp theo giờ.
+2. Tính đặc trưng ngày (năng lượng/kW, công suất đỉnh, giờ ban ngày, bức xạ, nhiệt độ, độ biến động).
+3. Tiền xử lý + gắn cờ outlier (Phase 1): clip giá trị âm về 0, loại nhiệt độ bất khả thi, chỉ phân tích giờ ban ngày.
+4. Clustering K-Means + GMM, k = 2–6, chọn theo silhouette và BIC (Phase 2).
+5. Luật kết hợp Apriori + FP-Growth, rời rạc hoá Low/Medium/High theo tertile từng hệ (Phase 3).
+6. Phát hiện bất thường Isolation Forest + One-Class SVM, cả hai cùng gắn cờ 5% giờ ban ngày (Phase 4).
+
+Sau đó xem bằng `python scripts/inspect_data.py` rồi mới viết báo cáo. Mọi data đã xử lý và kết quả đều do code tạo ra, không làm tay.
+
+**Kết quả chính**
+
+- **Clustering: k = 2 ở cả 3 hệ** (silhouette 0,457 / 0,445 / 0,349) — ngày công suất cao và ngày công suất thấp. Ở Las Vegas sự phân chia theo mùa; ở Golden và Cocoa Beach còn do mây.
+- **Luật kết hợp: 179 luật** (26 / 111 / 42). Bức xạ cao → công suất cao, confidence 0,92–0,95, lift 2,76–2,86 ở cả 3 hệ. Nhiệt độ cao làm giảm công suất ở Golden; độ ẩm thấp đi kèm trời quang ở Las Vegas.
+- **Bất thường: Isolation Forest gắn cờ ~5% giờ ban ngày** (187 / 200 / 191 giờ), đồng thuận với One-Class SVM 94,8–96,3%. Thu hồi đủ 28/28 giờ bức xạ cao/công suất thấp ở Golden. Không báo tỉ lệ chính xác vì không có nhãn ground truth.
+- **3 phát hiện mới trong đợt soát lại:** inverter 1 System 1403 chết 11–16/06, mất phát từ 09:00 ngày 04/11 tới 11:00 ngày 06/11, và khối toàn bộ kênh đọc 0 trong 44 giờ ngày 26–28/08.
+
+**Đọc kết quả ở đâu:** báo cáo đầy đủ trong `reports/final_report.md` (bản PDF nộp là `final_report-2026-11-26.pdf`), số liệu trong `outputs/`, kế hoạch từng phase trong `PLAN.md`.
+
+**Giới hạn:** cụm ngày là một dải liên tục nên silhouette chỉ ở mức vừa; luật dùng tertile riêng từng hệ nên "cao" mỗi nơi mỗi khác; System 1403 dùng nhiệt độ module và mang cờ QA `fail`; phân tích chỉ 1 năm 2015, 3 hệ.
+
 ## Nguồn dữ liệu
 
 **NREL PVDAQ — Photovoltaic Data Acquisition, Public Datasets**
@@ -26,6 +58,45 @@ Bộ data chốt để làm bài: **NREL PVDAQ, cả năm 2015, 3 hệ thống**
 **Quy tắc của repo này: data thô + code + kết quả + data trung gian đều nằm trong git — tất cả data đã xử lý đều do code tạo ra khi chạy pipeline.**
 - **Data đã xử lý cả năm 2015** trong `data/hourly_full_year/` — 3 file theo giờ, 8.760 giờ/hệ (System 1403: 8.730 giờ, thiếu 30 giờ do 2 khoảng trống qua đêm tháng 4 và tháng 6), tổng 2,6 MB; và `data/daily_full_year/` — 3 file đặc trưng ngày, 365 ngày/hệ, tính từ bản theo giờ cả năm. **Các file này do code tạo ra khi chạy pipeline và CÓ trong git** (xem `.gitignore` và mục Cách chạy). Chạy `python scripts/run_pipeline.py` để tạo lại y hệt, rồi xem bằng `python scripts/inspect_data.py` trước khi viết report. **Kết quả cũng có trong git: `outputs/` (4 file report JSON, `association_rules.csv`, 3 file giờ anomaly)**, để người chấm xem trực tiếp mà không cần chạy code; chỉ biểu đồ PNG là không đẩy được lên git (công cụ push chỉ nhận file text) nên chạy lại script để xem. Tên cột là chữ thường (`ac_power_w`, `poa_irradiance_wm2`, …). Chi tiết kiểm tra cả năm, quy tắc làm sạch và các caveat xem trong `data/hourly_full_year/README.md`; script tái tạo bản theo giờ ở `scripts/build_hourly_2015.py`. Timestamp là giờ chuẩn địa phương từng bang (local standard time, không đổi theo DST — từ tháng 3 đến tháng 11 lệch 1 giờ so với giờ đồng hồ địa phương thật), đừng merge 3 hệ theo timestamp khi chưa đổi về chung một múi giờ.
 - **Data thô** trong `data/raw_full/` — 186 file ngày gốc PVDAQ tháng 1 và tháng 7/2015, giữ nguyên tên file và nội dung, tổng ~38,4 MB (System 4: 15,4 MB, System 1278: 1,1 MB, System 1403: 22,0 MB). Lưu ý: phần thô trong repo chỉ có tháng 1 + 7, chưa có thô cả năm; bản đã xử lý cả năm đã bao gồm các tháng còn lại.
+
+## Dữ liệu
+
+Dữ liệu là số liệu đo thực tế từ 3 hệ điện mặt trời trong cơ sở dữ liệu công khai NREL PVDAQ. Mỗi dòng là 1 giờ: công suất phát điện, bức xạ mặt trời, nhiệt độ môi trường và nhiệt độ module, kèm số mẫu thô đã tổng hợp thành giờ đó. Phân tích dùng cả năm 2015 (01/01–31/12), timestamp là giờ chuẩn địa phương từng bang (local standard time, không đổi theo DST).
+
+### Các biến chính
+
+| Biến | Ý nghĩa | Ghi chú |
+|---|---|---|
+| `timestamp` | Giờ đo (giờ chuẩn địa phương từng bang) | 1 dòng = 1 giờ |
+| `ac_power_w` | Công suất AC phát ra | System 1403 = tổng 2 inverter (không có cột tổng gốc) |
+| `dc_power_w` | Công suất DC | System 1403 không có cột này |
+| `poa_irradiance_wm2` | Bức xạ trên mặt phẳng tấm pin (POA) | Biến chính để so với công suất |
+| `ambient_temp_c` | Nhiệt độ môi trường (°C) | System 1403 đọc cao bất thường mùa nóng |
+| `module_temp_c` | Nhiệt độ module (°C) | Trung vị các cảm biến (8 ở System 1403, 3 ở System 4, 1 ở System 1278) |
+| `n_samples` | Số mẫu thô đã tổng hợp thành giờ đó | 60 mẫu (đo 1 phút), 4 mẫu (đo 15 phút) |
+| Riêng System 1278 | `relative_humidity_pct`, `wind_speed_ms`, `wind_direction_deg` | Độ ẩm, tốc độ + hướng gió |
+| Riêng System 1403 | `poa_refcell_wm2` | Bức xạ đo bằng pin chuẩn |
+
+### Các file dữ liệu trong repo
+
+| Thư mục | Nội dung | Quy mô |
+|---|---|---|
+| `data/raw_full/` | File thô gốc PVDAQ, tháng 1 + 7/2015 | 186 file, ~38,4 MB |
+| `data/hourly_full_year/` | Bản theo giờ cả năm 2015 + README kiểm tra + `systems.csv` | 3 file, 8.760 / 8.760 / 8.730 giờ |
+| `data/daily_full_year/` | Đặc trưng ngày (năng lượng, công suất max/trung bình, bức xạ, nhiệt độ) | 3 file, 365 ngày/hệ |
+| `data/processed/` | File clean theo giờ (thêm `power_per_kw`, `irr_ratio`, cờ outlier, z-score) + file daily_features (thêm cụm K-Means/GMM) | 3 + 3 file |
+| `data/metadata/` | 3 file JSON gốc của PVDAQ (thông tin hệ, cảm biến) | 3 file |
+| `outputs/` | Kết quả phân tích: 4 report JSON, `association_rules.csv` (179 luật), 3 file giờ anomaly | Xem mục Cấu trúc file |
+
+### Tổng quan năm 2015
+
+| Hệ | Giờ | Giờ ban ngày (bức xạ > 50 W/m²) | Năng lượng năm | Trung bình/ngày | Tương quan công suất–bức xạ |
+|---|---|---|---|---|---|
+| 4 | 8.760 | 3.736 | 1.436,8 kWh | 3,94 kWh | 0,942 |
+| 1278 | 8.760 | 4.001 | 260.414,4 kWh | 713,46 kWh | 0,980 |
+| 1403 | 8.730 | 3.818 | 9.067,6 kWh | 24,84 kWh | 0,964 |
+
+System 1403 thiếu 30 giờ (2 khoảng trống qua đêm tháng 4 và tháng 6); System 1278 thiếu 22 giờ công suất AC. Các số trên tính trực tiếp từ file theo giờ trong repo (đã kiểm chứng lại ngày 25/11/2026). Chi tiết kiểm tra từng giờ và các caveat xem `data/hourly_full_year/README.md`; các vấn đề dữ liệu phát hiện được liệt kê ở mục dưới.
 
 ## 3 hệ thống đã chốt
 
